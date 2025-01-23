@@ -107,7 +107,7 @@ export default function TopNavbar() {
           </UlWrapper>
           <UlWrapperRight className="flexNullCenter">
             <li className="semiBold font15 pointer">
-              <a href="mailto:hello@propertymaintenancebristol.co.uk" style={{ padding: "10px 30px 10px 0" }}>📧 hello@bristolpropertymaintenance.co.uk</a> <br/>
+              <a href="mailto:hello@bristolpropertymaintenance.co.uk" style={{ padding: "10px 30px 10px 0" }}>📧 hello@bristolpropertymaintenance.co.uk</a> <br/>
               <a href="/" style={{ padding: "10px 30px 10px 0" }}>
                 Call today 📞 0333 360 6113
               </a>

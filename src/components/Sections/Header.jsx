@@ -20,7 +20,7 @@ export default function Header() {
             surrounding areas.
           </HeadingTag>
           <h1 className="extraBold font60">
-            We are a Property Maintenance Company.
+            Bristol Property Maintenance.
           </h1>
 
           <HeaderP className="font13 semiBold">
