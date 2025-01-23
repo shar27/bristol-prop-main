@@ -1,162 +1,139 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-// Components
-import ProjectBox from "../Elements/ProjectBox";
-import FullButton from "../Buttons/FullButton";
-// Assets
-import ProjectImg1 from "../../assets/img/projects/1.png";
-import ProjectImg2 from "../../assets/img/projects/2.png";
-import ProjectImg3 from "../../assets/img/projects/3.png";
-import ProjectImg4 from "../../assets/img/projects/4.png";
-import ProjectImg5 from "../../assets/img/projects/5.png";
-import ProjectImg6 from "../../assets/img/projects/6.png";
-import AddImage2 from "../../assets/img/add/add2.png";
-import Trustpilot from '../../assets/img/trustpilot.jpg'
+import TopNavbar from "../Nav/TopNavbar";
+import Footer from '../Sections/Footer';
+import Contact from "..//Sections/Contact";
+import bathroom from '../../assets/img/projects/bathroom.jpg'
+import bathroomtiles from '../../assets/img/projects/bathroomtiles.jpg'
+import bathroomtiles2 from '../../assets/img/projects/bathroomtiles2.jpg'
+import livingroom from '../../assets/img/projects/livingroom.jpg'
+import livingroom2 from '../../assets/img/projects/livingroom2.jpg'
+import room from '../../assets/img/projects/room.jpg'
+import oven from '../../assets/img/projects/OVEN-NEW.jpeg'
+import fridge from '../../assets/img/projects/fridgereplace.jpg'
 
-export default function Projects() {
+export default function Landlords() {
+  const images = [bathroomtiles, bathroom,bathroomtiles, bathroomtiles2,livingroom,livingroom2,fridge, oven, room];
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <Wrapper id="projects">
-      <div className="whiteBg">
-        <div className="container">
-          {/* <HeaderInfo>
-            <h1 className="font40 extraBold">TRUSTPILOT REVIEWS</h1>
-            <img
-            src={Trustpilot}
-            width="auto"
-            height="auto"
-            />
+    <>
+      <TopNavbar />
+      <Container>
+        <Header>Our Work</Header>
+        <ContentAndSlideshowWrapper>
+          <ContentSection>
+            <SubHeader>How we help.</SubHeader>
+            <Paragraph>
+              We have been carrying our various property maintenance related services for landlords, solicitors, letting agents and individuals
+            </Paragraph>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
+             Services:
+            </h3>
+            <BenefitsList>
+              <BenefitItem>✔ Deep cleaning</BenefitItem>
+              <BenefitItem>✔ Kitchen Fitting</BenefitItem>
+              <BenefitItem>✔ Bathroom fitting</BenefitItem>
+              <BenefitItem>✔ Waste/Furntiure removal</BenefitItem>
+              <BenefitItem>✔ Handyman repair</BenefitItem>
+            </BenefitsList>
+          </ContentSection>
 
-          </HeaderInfo> */}
-          {/* <div className="row textCenter">
-            <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-              <ProjectBox
-                img={ProjectImg1}
-                title="Awesome Project"
-                text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor."
-                action={() => alert("clicked")}
-              />
-            </div>
-            <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-              <ProjectBox
-                img={ProjectImg2}
-                title="Awesome Project"
-                text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor."
-                action={() => alert("clicked")}
-              />
-            </div>
-            <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-              <ProjectBox
-                img={ProjectImg3}
-                title="Awesome Project"
-                text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor."
-                action={() => alert("clicked")}
-              />
-            </div>
-          </div>
-          <div className="row textCenter">
-            <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-              <ProjectBox
-                img={ProjectImg4}
-                title="Awesome Project"
-                text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor."
-                action={() => alert("clicked")}
-              />
-            </div>
-            <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-              <ProjectBox
-                img={ProjectImg5}
-                title="Awesome Project"
-                text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor."
-                action={() => alert("clicked")}
-              />
-            </div>
-            <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-              <ProjectBox
-                img={ProjectImg6}
-                title="Awesome Project"
-                text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor."
-                action={() => alert("clicked")}
-              />
-            </div>
-          </div>
-          <div className="row flexCenter">
-            <div style={{ margin: "50px 0", width: "200px" }}>
-              <FullButton title="Load More" action={() => alert("clicked")} />
-            </div>
-          </div> */}
-        </div>
-      </div>
-    
-    </Wrapper>
+          <SlideshowContainer>
+            <SlideImage
+              src={images[currentIndex]}
+              alt={`Slide ${currentIndex + 1}`}
+            />
+          </SlideshowContainer>
+        </ContentAndSlideshowWrapper>
+      </Container>
+
+    </>
   );
 }
 
-const Wrapper = styled.section`
-  width: 100%;
+const Container = styled.div`
+  min-height: 100vh;
+  background-color: white;
+  color: black;
 `;
-const HeaderInfo = styled.div`
-  @media (max-width: 860px) {
-    text-align: center;
+
+const Header = styled.h1`
+  text-align: center;
+  font-size: 3rem;
+  padding: 20px 0;
+  background-color: white;
+`;
+
+const ContentAndSlideshowWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  gap: 20px; /* Space between content and slideshow */
+
+  @media (max-width: 768px) {
+    flex-direction: column; /* Stack on smaller screens */
+    gap: 10px; /* Adjust gap for stacked layout */
+    margin-top:10px;
   }
 `;
 
-const ButtonsRow = styled.div`
-  @media (max-width: 860px) {
-    justify-content: space-between;
+const ContentSection = styled.div`
+  flex: 1; /* Allow content to take available space */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align items to the start */
+`;
+
+const SubHeader = styled.h2`
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem; /* Smaller font size on mobile */
   }
 `;
-const AddLeft = styled.div`
-  position: relative;
-  width: 50%;
-  p {
-    max-width: 475px;
-  }
-  @media (max-width: 860px) {
-    width: 80%;
-    order: 2;
-    text-align: center;
-    h2 {
-      line-height: 3rem;
-      margin: 15px 0;
-    }
-    p {
-      margin: 0 auto;
-    }
+
+const Paragraph = styled.p`
+  font-size: 1.125rem;
+  margin-bottom: 1.5rem;
+
+  @media (max-width: 768px) {
+    font-size: 1rem; /* Smaller font size on mobile */
   }
 `;
-const AddRight = styled.div`
-  width: 50%;
-  @media (max-width: 860px) {
-    width: 80%;
-    order: 2;
-  }
+
+const BenefitsList = styled.ul`
+  list-style-type: disc;
+  padding-left: 1.5rem;
 `;
-const AddLeftInner = styled.div`
+
+const BenefitItem = styled.li`
+  list-style: none;
+  margin: 0.5rem 0;
+`;
+
+const SlideshowContainer = styled.div`
+  flex: 1; /* Allow slideshow to take available space */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+`;
+
+const SlideImage = styled.img`
   width: 100%;
-  position: absolute;
-  top: -300px;
-  left: 0;
-  @media (max-width: 1190px) {
-    top: -250px;
-  }
-  @media (max-width: 920px) {
-    top: -200px;
-  }
-  @media (max-width: 860px) {
-    order: 1;
-    position: relative;
-    top: -60px;
-    left: 0;
-  }
-`;
-const ImgWrapper = styled.div`
-  width: 100%;
-  padding: 0 15%;
-  img {
-    width: 100%;
-    height: auto;
-  }
-  @media (max-width: 400px) {
-    padding: 0;
-  }
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 `;
