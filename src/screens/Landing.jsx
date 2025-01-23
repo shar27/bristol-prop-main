@@ -9,6 +9,7 @@ import Reviews from "../components/Sections/Reviews";
 import Contact from "../components/Sections/Contact";
 import Footer from "../components/Sections/Footer";
 import Locations from "../components/Sections/Locations";
+import Projects from '../components/Sections/Projects'
 import WhatsApp from '../assets/img/whatsapp-business-icon.jpeg';
 
 export default function Landing() {
