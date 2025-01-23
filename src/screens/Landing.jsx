@@ -61,6 +61,7 @@ export default function Landing() {
       </FloatWrapper>
       <Reviews />
       <Services />
+      <Projects/>
       <Locations/>
       <Contact />
       <Footer />
