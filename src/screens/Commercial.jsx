@@ -3,16 +3,10 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 // Sections
 import TopNavbar from "../components/Nav/TopNavbar";
-import Projects from '../components/Sections/Projects'
-import CommercialHeader from '../components/Sections/Commercial/CommercialHeader'
-import Services from "../components/Sections/Services";
-import Reviews from "../components/Sections/Reviews";
 import Contact from "../components/Sections/Contact";
 import Footer from "../components/Sections/Footer";
-import Locations from "../components/Sections/Locations";
 import WhatsApp from '../assets/img/whatsapp-business-icon.jpeg';
-import OtherAreas from "../components/Sections/OtherAreas";
-
+import CommercialHeader from "../components/Sections/Commercial/Commercialheader";
 export default function Landing() {
   const [showArrow, setShowArrow] = useState(false);
 

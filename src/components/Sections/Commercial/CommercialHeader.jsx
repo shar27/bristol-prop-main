@@ -7,7 +7,7 @@ import HeaderImage from "../../../assets/img/comm-office.jpg";
 import QuotesIcon from "../../../assets/svg/Quotes";
 import Dots from "../../../assets/svg/Dots";
 
-export default function Header() {
+export default function CommercialHeader() {
   return (
     <Wrapper id="home" className="container flexSpaceCenter">
       <LeftSide className="flexCenter">
