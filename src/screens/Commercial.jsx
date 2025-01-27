@@ -6,7 +6,7 @@ import TopNavbar from "../components/Nav/TopNavbar";
 import Contact from "../components/Sections/Contact";
 import Footer from "../components/Sections/Footer";
 import WhatsApp from '../assets/img/whatsapp-business-icon.jpeg';
-import CommercialHeader from "../components/Sections/Commercial/Commercialheader";
+import CommercialHeader from "../components/Sections/Commercial/CommercialHeader";
 export default function Landing() {
   const [showArrow, setShowArrow] = useState(false);
 
