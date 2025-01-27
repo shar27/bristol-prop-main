@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
 import styled from "styled-components";
 import ReCAPTCHA from 'react-google-recaptcha';
+import ThankYou from '../../screens/ThankYou'
 
 export default function Contact() {
   const [message, setMessage] = useState('');
@@ -31,9 +32,10 @@ export default function Contact() {
       .then((result) => {
           console.log(result.text);
           setMessage('Your message has been received');
+          window.location.replace("/thankyou");
           
       }, (error) => {
-        setMessage('Error sending message, please email hello@swiftukproperties.co.uk');
+        setMessage('Error sending message, please email hello@bristolpropertymaintenance.co.uk');
           console.log(error.text);
       });
   };
@@ -65,6 +67,10 @@ export default function Contact() {
                   <option value="clearance">Clearance</option>
                   <option value="plumbing">Plumbing</option>
                   <option value="electrician">Electrician</option>
+                  <option value="cctv">cctv</option>
+                  <option value="Roofing">Roofing</option>
+                  <option value="Painting">Painting</option>
+                  <option value="Commercial">Commercial</option>
                 </select>
 
                 <label className="font13">Have you sent us photos on WhatsApp or Email?</label>
@@ -96,6 +102,10 @@ export default function Contact() {
     </Wrapper>
   );
 }
+
+// Styled components...
+
+
 const Wrapper = styled.section`
   width: 100%;
 `;
@@ -153,7 +163,6 @@ const SubmitWrapper = styled.div`
     margin-bottom: 50px;
   }
 `;
-
 
 
 

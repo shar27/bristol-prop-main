@@ -5,7 +5,8 @@ import { Helmet } from "react-helmet";
 import Landing from "./screens/Landing.jsx";
 import Landlords from './screens/Landlords.jsx';
 import DynamicPage from "./components/DynamicPage.jsx";
-import Bristol from './screens/Bristol.jsx'
+import Commercial from '../src/screens/Commercial.jsx'
+import ThankYou from "./screens/ThankYou.jsx";
 
 export default function App() {
   return (
@@ -20,8 +21,9 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/landlords" element={<Landlords />} />
-          <Route path="/bristlpropertymaintenance" element={<Bristol />} />
+          <Route path=":commercial" element={<Commercial/>}/>
           <Route path=":slug" element={<DynamicPage/>}/>
+          <Route path="thankyou" element={<ThankYou/>}/>
         </Routes>
       </>
     </Router>
