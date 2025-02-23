@@ -144,6 +144,8 @@ const ContactInfoSmallScreen = styled.div`
 
   @media (max-width: 760px) {
     position: fixed;
+        font-size:14px;
+
     width: 100%;
     display: block;
     z-index: 999;
@@ -191,12 +193,12 @@ const UlWrapper = styled.ul`
   display: flex;
 
   @media (max-width: 760px) {
-    display: none;
+    display: none !important;
   }
 `;
 
 const UlWrapperRight = styled.ul`
   @media (max-width: 760px) {
-    display: none;
+    display: none !important;
   }
 `;
