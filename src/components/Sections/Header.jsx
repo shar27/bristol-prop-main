@@ -206,14 +206,14 @@ const QuoteWrapper = styled.div`
 
   @media (max-width: 960px) {
     left: 50%;
-    display: none;
+    display:none !important;
     bottom: auto;
     top: 40%;
     transform: translateX(-50%);
     margin-bottom: 10px;
   }
   @media (max-width: 560px) {
-    display: none;
+  display:none;
     bottom: -50px;
   }
 `;
@@ -224,7 +224,7 @@ const QuotesWrapper = styled.div`
   top: -10px;
 `;
 const DotsWrapper = styled.div`
-  position: absolute;
+ position: absolute;
   right: -100px;
   bottom: 100px;
   z-index: 2;
