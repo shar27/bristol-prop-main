@@ -20,7 +20,7 @@ function ThankYou() {
 
     const timer = setTimeout(() => {
       window.location.href = '/';
-    }, 10000); // Redirect after 5 seconds
+    }, 7000); // Redirect after 5 seconds
 
     // Cleanup on unmount
     return () => clearTimeout(timer);
