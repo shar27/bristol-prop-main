@@ -40,8 +40,8 @@ export default function TopNavbar() {
   return (
     <>
       <ContactInfoSmallScreen>
-        <a href="mailto:hello@leeds-property-maintenance.co.uk">
-          📧 hello@leeds-property-maintenance.co.uk
+        <a href="mailto:hello@https://www.bristolpropertymaintenance.co.uk">
+          📧 hello@https://www.bristolpropertymaintenance.co.uk
         </a>
         <a href="tel:015138803613"
          onClick={handleCallClick}
@@ -203,10 +203,10 @@ export default function TopNavbar() {
           <UlWrapperRight className="flexNullCenter">
             <li className="semiBold font15 pointer">
               <a
-                href="mailto:hello@leeds-property-maintenance.co.uk"
+                href="mailto:hello@https://www.bristolpropertymaintenance.co.uk"
                 style={{ padding: "10px 30px 10px 0" }}
               >
-                📧 hello@leeds-property-maintenance.co.uk
+                📧 hello@https://www.bristolpropertymaintenance.co.uk
               </a>
               <br />
               <a href="tel:01513880361" 
