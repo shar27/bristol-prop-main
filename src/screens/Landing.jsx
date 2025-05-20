@@ -3,14 +3,16 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 // Sections
 import TopNavbar from "../components/Nav/TopNavbar";
+import Projects from '../components/Sections/Projects'
 import Header from "../components/Sections/Header";
 import Services from "../components/Sections/Services";
 import Reviews from "../components/Sections/Reviews";
 import Contact from "../components/Sections/Contact";
 import Footer from "../components/Sections/Footer";
-import Locations from "../components/Sections/Locations";
-import Projects from '../components/Sections/Projects'
-import WhatsApp from '../assets/img/whatsapp-business-icon.jpeg';
+import Badges from "../components/Sections/Badges";
+import WhatsappIcon from '../components/Elements/WhatsappIcon'
+import MobileStickyCTA from "../components/Elements/MobileCta";
+
 
 export default function Landing() {
   const [showArrow, setShowArrow] = useState(false);
@@ -38,9 +40,9 @@ export default function Landing() {
       <TopNavbar />
       <Header />
       <FloatWrapper>
-        <a href="https://wa.me/447907772626">
-          <Img src={WhatsApp} alt="WhatsApp" />
-        </a>
+     
+         <WhatsappIcon/>
+     
         {showArrow && (
           <ArrowButton onClick={scrollToTop}>
             <svg
@@ -60,12 +62,18 @@ export default function Landing() {
           </ArrowButton>
         )}
       </FloatWrapper>
-      <Reviews />
+     
+      <Badges/>
+   
       <Services />
       <Projects/>
-      <Locations/>
+      {/* <Locations/> */}
+      {/* <OtherAreas/> */}
+      <Reviews />
       <Contact />
       <Footer />
+      <MobileStickyCTA />
+
     </>
   );
 }
@@ -85,11 +93,11 @@ const FloatWrapper = styled.div`
   align-items: center;
   position: fixed;
   bottom: 20px;
-  right: 20px;
+  right: 0px;
   z-index: 1000;
-  @media (max-width: 560px) {
-    bottom: 40px;
-  right: 10px;
+  @media (max-width: 460px) {
+    bottom: 50px;
+  right: 0px;
   }
 `;
 

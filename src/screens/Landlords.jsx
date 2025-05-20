@@ -3,9 +3,12 @@ import styled from "styled-components";
 import TopNavbar from "../components/Nav/TopNavbar";
 import Footer from '../components/Sections/Footer';
 import Contact from "../components/Sections/Contact";
+import poolroom from '../assets/img/poolroom.jpg'
+import livingroom from '../assets/img/livingroom.jpg'
+import bedroom from '../assets/img/bedroom.jpg'
 
 export default function Landlords() {
-  const images = ['/livingroom.jpg', '/poolroom.jpg', '/bedroom.jpg'];
+  const images = [livingroom, poolroom,bedroom];
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
