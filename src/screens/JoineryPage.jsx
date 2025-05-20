@@ -13,7 +13,7 @@ export default function JoineryServices() {
         <HeroBackground>
           <HeroOverlay />
           <HeroContent>
-            <h1>Joinery Services in Leeds</h1>
+            <h1>Joinery Services in Bristol</h1>
             <p>
               Affordable joinery solutions for homes and businesses – from door hanging and shelving to small custom woodwork jobs.
             </p>
