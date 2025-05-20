@@ -24,7 +24,7 @@ export default function Contact() {
               © {getCurrentYear()} - <span className="purpleColor font13">Property Maintenance Liverpool</span> All Right Reserved
             </StyleP> */}
             <StyleP className="whiteColor font13">
-             <h6 className="whiteColor font13">Property Maintenance Bristol is a
+             <h6 className="whiteColor font13">Leeds Property Maintenance is 
              trading name for <br/> SWIFT UK PROPERTY INVESTMENTS LTD. <br/>
              Company number: 15244665
              
@@ -38,9 +38,19 @@ export default function Contact() {
       </div>
       <BottomFooter>
     
-      <div className="contact-info"><h4>📧 hello@bristolpropertymaintenance.co.uk</h4></div>
-              <div><h4>📞 0333 360 6113</h4></div>
-        
+      <li className="semiBold font15 pointer">
+              <a
+                href="mailto:hello@leeds-property-maintenance.co.uk  "
+                
+              >
+                📧 hello@leeds-property-maintenance.co.uk  
+              </a>
+          </li>
+          <li className="semiBold font15 pointer">
+              <a href="tel:03333606113" >
+                Call today 📞 0333 360 6113
+              </a>
+            </li>
     
       </BottomFooter>
     </Wrapper>
@@ -52,25 +62,35 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-const BottomFooter = styled.div`
-display:flex;
-justify-content: space-between;
-color:black;
-font-weight:semi-bold;
-padding: 1.5rem;
+const BottomFooter = styled.ul`
+  display: flex;
+  justify-content: space-between;
+  color: black;
+  list-style: none;
+  font-weight: 600; /* use numeric font weights instead of 'semi-bold' */
+  padding: 1.5rem;
+  margin: 0; /* Reset margin */
+  padding-left: 0; /* Remove default padding */
 
-
-@media (max-width: 600px) {
-    flex-direction: column;
-    align-items: flex-start;
+  li {
+    font-weight: 600; /* consistent font-weight */
+    list-style: none;
   }
 
-  .contact-info {
-    display: flex;
-    flex-direction: column;
+  li a {
+    font-weight: 600;
+    text-decoration: none;
+    color: black;
   }
 
-`
+  @media (max-width: 550px) {
+    flex-direction: column; /* stack items vertically */
+    align-items: center; /* optional: center items */
+    font-size: 12px; /* slightly bigger than 9px for readability */
+    gap: 10px; /* adds spacing between stacked items */
+  }
+`;
+
 const InnerWrapper = styled.div`
   @media (max-width: 550px) {
     flex-direction: column;

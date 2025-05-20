@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link as RouterLink } from "react-router-dom"; // Import RouterLink
 // Components
-import Sidebar from "../Nav/Sidebar";
+import Sidebar from "./Sidebar";
 import Backdrop from "../Elements/Backdrop";
 // Assets
 import LogoIcon from "../../assets/svg/Logo";
@@ -11,6 +11,11 @@ import BurgerIcon from "../../assets/svg/BurgerIcon";
 export default function TopNavbar() {
   const [y, setY] = useState(window.scrollY);
   const [sidebarOpen, toggleSidebar] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
 
   useEffect(() => {
     const handleScroll = () => setY(window.scrollY);
@@ -20,27 +25,53 @@ export default function TopNavbar() {
     };
   }, []);
 
+  const handleCallClick = () => {
+    if (window.gtag) {
+      window.gtag('event', 'conversion', {
+        send_to: 'AW-11182108205/d_k4CPKHz6oaEK3chdQp',
+        value: 1.0,
+        currency: 'GBP'
+      });
+      
+    }
+  };
+  
+
   return (
     <>
       <ContactInfoSmallScreen>
-        <a href="mailto:hello@bristolpropertymaintenance.co.uk">📧 hello@bristolpropertymaintenance.co.uk</a>
-        <a href="tel:03333606113">📞 0333 360 6113</a>
+        <a href="mailto:hello@leeds-property-maintenance.co.uk">
+          📧 hello@leeds-property-maintenance.co.uk
+        </a>
+        <a href="tel:015138803613"
+         onClick={handleCallClick}
+        >📞 0333 360 6113</a>
       </ContactInfoSmallScreen>
       <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       {sidebarOpen && <Backdrop toggleSidebar={toggleSidebar} />}
-      <Wrapper className="flexCenter animate whiteBg" style={y > 100 ? { height: "60px" } : { height: "100px" }}>
+      <Wrapper
+        className="flexCenter animate whiteBg"
+        style={y > 100 ? { height: "60px" } : { height: "100px" }}
+      >
         <NavInner className="container flexSpaceCenter">
-          <RouterLink className="pointer flexNullCenter" to="/"onClick={() => {
-        setTimeout(() => {
-          const section = document.getElementById("/");
-          if (section) {
-            section.scrollIntoView({ behavior: "smooth" });
-          }
-        }, 0);
-      }}>
+          <RouterLink
+            className="pointer flexNullCenter"
+            to="/"
+            onClick={() => {
+              setTimeout(() => {
+                const section = document.getElementById("/");
+                if (section) {
+                  section.scrollIntoView({ behavior: "smooth" });
+                }
+              }, 0);
+            }}
+          >
             <LogoIcon />
           </RouterLink>
-          <BurderWrapper className="pointer" onClick={() => toggleSidebar(!sidebarOpen)}>
+          <BurderWrapper
+            className="pointer"
+            onClick={() => toggleSidebar(!sidebarOpen)}
+          >
             <BurgerIcon />
           </BurderWrapper>
           <UlWrapper className="flexNullCenter">
@@ -61,11 +92,21 @@ export default function TopNavbar() {
                 Home
               </RouterLink>
             </li>
-            <li className="semiBold font15 pointer">
-              <RouterLink
+            <li
+      className="semiBold font15 pointer relative"
+      style={{ position: "relative" }}
+      onMouseEnter={toggleDropdown}
+      onMouseLeave={toggleDropdown}
+    >
+     
+      <span
+        className="pointer"
+        style={{ padding: "10px 15px", display: "inline-block" }}
+      >
+        <RouterLink
                 className="pointer"
                 style={{ padding: "10px 15px" }}
-                to="/#services"
+                to="#services"
                 onClick={() => {
                   setTimeout(() => {
                     const section = document.getElementById("services");
@@ -75,16 +116,61 @@ export default function TopNavbar() {
                   }, 0);
                 }}
               >
-                Services
-              </RouterLink>
-            </li>
-            <li className="semiBold font15 pointer">
-              <RouterLink
+        Services ▼
+        </RouterLink>
+      </span>
+     
+      {isDropdownOpen && (
+        <ul
+          className="dropdown-menu"
+          style={{
+            position: "absolute",
+            top: "100%",
+            left: 0,
+            background: "#fff",
+            border: "1px solid #ccc",
+            boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+            zIndex: 1000,
+            listStyle: "none",
+            padding: "10px 0",
+            minWidth: "200px"
+          }}
+        >
+          <li
+            className="dropdown-item"
+            style={{ padding: "10px 20px", cursor: "pointer" }}
+          >
+           <RouterLink
                 className="pointer"
                 style={{ padding: "10px 15px" }}
                 to="/landlords"
               >
                 Guaranteed Rent
+              </RouterLink>
+          </li>
+          <li
+            className="dropdown-item"
+            style={{ padding: "10px 20px", cursor: "pointer" }}
+          >
+           <RouterLink
+                className="pointer"
+                style={{ padding: "10px 15px" }}
+                to="/joinery"
+              >
+                Joinery Services
+              </RouterLink>
+          </li>
+        
+        </ul>
+      )}
+    </li>
+    <li className="semiBold font15 pointer">
+              <RouterLink
+                className="pointer"
+                style={{ padding: "10px 15px" }}
+                to="/zero-percent-finance"
+              >
+                0% Interest Finance
               </RouterLink>
             </li>
             <li className="semiBold font15 pointer">
@@ -100,10 +186,10 @@ export default function TopNavbar() {
               <RouterLink
                 className="pointer"
                 style={{ padding: "10px 15px" }}
-                to="/#contact"
+                to="/#contactlg"
                 onClick={() => {
                   setTimeout(() => {
-                    const section = document.getElementById("contact");
+                    const section = document.getElementById("contactlg");
                     if (section) {
                       section.scrollIntoView({ behavior: "smooth" });
                     }
@@ -116,8 +202,19 @@ export default function TopNavbar() {
           </UlWrapper>
           <UlWrapperRight className="flexNullCenter">
             <li className="semiBold font15 pointer">
-              <a href="mailto:hello@bristolpropertymaintenance.co.uk" style={{ padding: "10px 30px 10px 0" }}>📧 hello@bristolpropertymaintenance.co.uk</a> <br/>
-              <a href="/" style={{ padding: "10px 30px 10px 0" }}>
+              <a
+                href="mailto:hello@leeds-property-maintenance.co.uk"
+                style={{ padding: "10px 30px 10px 0" }}
+              >
+                📧 hello@leeds-property-maintenance.co.uk
+              </a>
+              <br />
+              <a href="tel:01513880361" 
+               onClick={handleCallClick}
+              style={{ padding: "10px 30px 10px 0" }}
+             
+
+              >
                 Call today 📞 0333 360 6113
               </a>
             </li>
@@ -144,11 +241,11 @@ const ContactInfoSmallScreen = styled.div`
 
   @media (max-width: 760px) {
     position: fixed;
-        font-size:14px;
-
     width: 100%;
     display: block;
     z-index: 999;
+    font-size:14px;
+      text-align: center;
   }
 `;
 
@@ -186,6 +283,7 @@ const BurderWrapper = styled.button`
 
   @media (max-width: 760px) {
     display: block;
+    margin-right:40px;
   }
 `;
 

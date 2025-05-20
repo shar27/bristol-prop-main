@@ -50,6 +50,26 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
         </li>
         <li className="semiBold font15 pointer">
           <Link
+            to="/zero-percent-finance"
+            onClick={() => handleScroll("services")}
+            className="whiteColor"
+            style={{ padding: "10px 15px", display: 'block' }}
+          >
+            0% Interest Finance
+          </Link>
+        </li>
+        <li className="semiBold font15 pointer">
+          <Link
+            to="/joinery"
+            onClick={() => handleScroll("services")}
+            className="whiteColor"
+            style={{ padding: "10px 15px", display: 'block' }}
+          >
+            Joinery
+          </Link>
+        </li>
+        <li className="semiBold font15 pointer">
+          <Link
             to="/Landlords"
             onClick={() => handleScroll("services")}
             className="whiteColor"
@@ -58,6 +78,16 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
             Guaranteed Rent
           </Link>
         </li>
+        <li className="semiBold font15 pointer">
+                      <Link
+                      
+                        className="pointer whiteColor"
+                        style={{ padding: "10px 15px" }}
+                        to="/commercial"
+                      >
+                        Commercial
+                      </Link>
+                    </li>
         <li className="semiBold font15 pointer">
           <Link
             to="/#contact"
@@ -95,7 +125,7 @@ const CloseBtn = styled.button`
   border: 0px;
   outline: none;
   background-color: transparent;
-  padding: 10px;
+  padding: 40px;
 `;
 
 const UlStyle = styled.ul`

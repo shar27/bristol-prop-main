@@ -82,9 +82,6 @@
   .textCenter {
     text-align: center
   }
-  .textWhite{
-    color:white;
-  }
   .animate {
     transition: 0.3s ease;
   }
@@ -272,26 +269,3 @@
   .whiteBg {
     background-color: #fff;
   }
-.wFull{
-  width: 100%;
-}
-
-.height10{
-  height: 10px;
-}
-
-.height20{
-  height: 20px;
-}
-
-.height30{
-  height: 30px;
-}
-
-.height40{
-  height: 40px;
-}
-
-.height50{
-  height: 50px;
-}

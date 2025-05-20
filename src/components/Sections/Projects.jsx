@@ -1,64 +1,57 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import TopNavbar from "../Nav/TopNavbar";
-import Footer from '../Sections/Footer';
-import Contact from "..//Sections/Contact";
-import bathroom from '../../assets/img/projects/bathroom.jpg'
-import bathroomtiles from '../../assets/img/projects/bathroomtiles.jpg'
-import bathroomtiles2 from '../../assets/img/projects/bathroomtiles2.jpg'
-import livingroom from '../../assets/img/projects/livingroom.jpg'
-import livingroom2 from '../../assets/img/projects/livingroom2.jpg'
-import room from '../../assets/img/projects/room.jpg'
-import oven from '../../assets/img/projects/OVEN-NEW.jpeg'
-import fridge from '../../assets/img/projects/fridgereplace.jpg'
+import WorkShowcaseSlider from "./WorkSlideShow";
 
 export default function Landlords() {
-  const images = [bathroomtiles, bathroom,bathroomtiles, bathroomtiles2,livingroom,livingroom2,fridge, oven, room];
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <>
       <TopNavbar />
       <Container>
-        <Header>Our Work</Header>
+        <Header className="font40 extraBold">Our Work</Header>
         <ContentAndSlideshowWrapper>
           <ContentSection>
-            <SubHeader>How we help.</SubHeader>
+            <SubHeader className="font40">How we help.</SubHeader>
             <Paragraph>
-              We have been carrying our various property maintenance related services for landlords, solicitors, letting agents and individuals
+              We carry out a range of property maintenance services for landlords, solicitors, letting agents, and homeowners.
             </Paragraph>
             <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>
-             Services:
+              Services:
             </h3>
             <BenefitsList>
               <BenefitItem>✔ Deep cleaning</BenefitItem>
               <BenefitItem>✔ Kitchen Fitting</BenefitItem>
               <BenefitItem>✔ Bathroom fitting</BenefitItem>
-              <BenefitItem>✔ Waste/Furntiure removal</BenefitItem>
+              <BenefitItem>✔ Waste/Furniture removal</BenefitItem>
               <BenefitItem>✔ Handyman repair</BenefitItem>
+              <BenefitItem>✔ Roof repair</BenefitItem>
+              <BenefitItem>✔ Window Washing</BenefitItem>
+              <BenefitItem>✔ Gutter Cleaning</BenefitItem>
+              <BenefitItem>✔ Pressure Washing</BenefitItem>
+              <BenefitItem>✔ Fence repair</BenefitItem>
+              <BenefitItem>✔ Electrical </BenefitItem>
+              <BenefitItem>✔ Plumbing </BenefitItem>
             </BenefitsList>
           </ContentSection>
 
-          <SlideshowContainer>
-            <SlideImage
-              src={images[currentIndex]}
-              alt={`Slide ${currentIndex + 1}`}
-            />
-          </SlideshowContainer>
+          <SliderWrapper>
+            <WorkShowcaseSlider />
+          </SliderWrapper>
+
         </ContentAndSlideshowWrapper>
       </Container>
-
     </>
   );
 }
+
+const SliderWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+`;
 
 const Container = styled.div`
   min-height: 100vh;
@@ -77,38 +70,47 @@ const ContentAndSlideshowWrapper = styled.div`
   display: flex;
   flex-direction: row;
   padding: 10px;
-  gap: 20px; /* Space between content and slideshow */
+  gap: 20px;
 
   @media (max-width: 768px) {
-    flex-direction: column; /* Stack on smaller screens */
-    gap: 10px; /* Adjust gap for stacked layout */
+    flex-direction: column;
+    gap: 10px;
     margin-top:10px;
   }
 `;
 
 const ContentSection = styled.div`
-  flex: 1; /* Allow content to take available space */
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Align items to the start */
+  align-items: flex-start;
 `;
 
 const SubHeader = styled.h2`
-  font-size: 2rem;
   font-weight: bold;
   margin-bottom: 1rem;
 
   @media (max-width: 768px) {
-    font-size: 1.5rem; /* Smaller font size on mobile */
+    font-size: 1.5rem;
+  }
+`;
+
+const HeaderP = styled.div`
+  max-width: 470px;
+  padding: 15px 0 50px 0;
+  line-height: 1.5rem;
+  @media (max-width: 960px) {
+    padding: 15px 10px 50px 0;
+    text-align: center;
+    max-width: 100%;
   }
 `;
 
 const Paragraph = styled.p`
-  font-size: 1.125rem;
   margin-bottom: 1.5rem;
 
   @media (max-width: 768px) {
-    font-size: 1rem; /* Smaller font size on mobile */
+    font-size: 1rem;
   }
 `;
 
@@ -123,7 +125,7 @@ const BenefitItem = styled.li`
 `;
 
 const SlideshowContainer = styled.div`
-  flex: 1; /* Allow slideshow to take available space */
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -11,10 +11,6 @@ html, body {
   grid-template-columns: 1fr 150px 60% 1fr;
 }
 
-.text-white{
-  color: white;
-}
-
 .wrapper {
   display: flex;
   flex-grow: 1;
@@ -128,4 +124,3 @@ a {
 a:hover {
   color: #a166ff;
 }
-

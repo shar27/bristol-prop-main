@@ -1,74 +1,111 @@
 import React from "react";
 import styled from "styled-components";
-import { useState, useEffect } from "react";
 // Components
 import FullButton from "../Buttons/FullButton";
 // Assets
 import HeaderImage from "../../assets/img/header-img.jpg";
 import QuotesIcon from "../../assets/svg/Quotes";
 import Dots from "../../assets/svg/Dots";
+import MiniForm from '../Sections/MiniForm'
 
 export default function Header() {
-
-
   return (
     <Wrapper id="home" className="container flexSpaceCenter">
+     
+   
       <LeftSide className="flexCenter">
         <div>
-          <HeadingTag>
-            Property maintenance specialists covering Bath, Bristol &
-            surrounding areas.
+        <HeadingTag>
+        Leeds Property Maintenance -
+        Serving Leeds & surrounding areas.
           </HeadingTag>
-          <h1 className="extraBold font60">
-            Bristol Property Maintenance.
-          </h1>
-
+          <LargeHeading>
+          <h2 className="extraBold font40">Leeds Property Maintenance</h2>
+          
           <HeaderP className="font13 semiBold">
-            Looking for reliable property maintenance services in Bristol, Bath
-            & surrouding areas Our experienced team offers comprehensive
-            solutions for residential and commercial properties, including
-            building maintenance, repairs, and management. Trust us for
-            efficient and affordable services tailored to landlords and property
-            owners. Contact us for emergency assistance and ensure your
-            property's upkeep with our expert solutions.
-          </HeaderP>
+          Fully insured and trusted by Leeds landlords, agents, and homeowners. Free quotes with 0% finance available.
 
+          </HeaderP>
+</LargeHeading>
+          <SmallHeading>
+
+              Fully insured and trusted by Leeds landlords, agents, and homeowners. Free quotes with 0% finance available.
+          </SmallHeading>
           <BtnWrapper>
             <a href="#contactForm">
-              <FullButton title="Free Quote" />
+            <FullButton title="Request Your Free Quote"  />
             </a>
           </BtnWrapper>
         </div>
       </LeftSide>
       <RightSide>
         <ImageWrapper>
-          <Img
-            className="radius8"
-            src={HeaderImage}
-            width="100%"
-            alt="office"
-            style={{ zIndex: 9 }}
-          />
-          <QuoteWrapper className="flexCenter darkBg radius8">
-            <QuotesWrapper>
-              <QuotesIcon />
-            </QuotesWrapper>
-            <div>
-              <p className="font15 whiteColor">
-                <em>Making the difficult choices, easier.</em>
-              </p>
-            </div>
-          </QuoteWrapper>
+          <Img className="radius8" src={HeaderImage} width="100%" alt="office" style={{zIndex: 9}} />
+         <MiniFormWrapperSmall>
+          <MiniForm />
+          </MiniFormWrapperSmall>
+      
           <DotsWrapper>
             <Dots />
           </DotsWrapper>
         </ImageWrapper>
         <GreyDiv className="lightBg"></GreyDiv>
       </RightSide>
-      
     </Wrapper>
   );
 }
+
+const MiniFormWrapperSmall = styled.div `
+
+@media (max-width:1024px){
+display:none;
+
+}
+`
+
+const SmallHeading = styled.div `
+
+@media (min-width:1024px){
+display:none;
+}
+
+@media (max-width:1024px){
+display:block;
+padding: 0px;
+}
+`
+
+const LargeHeading = styled.div `
+@media (max-width:1024px){
+display:none;
+
+}
+
+`
+const ContactWrapper = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 400px;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+
+  @media (max-width: 960px) {
+    position: relative;
+    transform: none;
+    top: auto;
+    left: auto;
+    width: 100%;
+    padding: 20px;
+    margin-top: 20px;
+  }
+`;
+
 
 const Wrapper = styled.section`
   padding-top: 80px;
@@ -82,7 +119,7 @@ const Wrapper = styled.section`
   }
 `;
 const LeftSide = styled.div`
-  width: 50%;
+   width: 50%;
   height: 100%;
   @media (max-width: 960px) {
     width: 100%;
@@ -95,7 +132,7 @@ const LeftSide = styled.div`
   }
 `;
 const RightSide = styled.div`
-  width: 50%;
+   width: 50%;
   height: 100%;
   position: relative;
   @media (max-width: 960px) {
@@ -104,27 +141,27 @@ const RightSide = styled.div`
     margin-top: 30px;
   }
 `;
-
 const HeaderP = styled.div`
-  max-width: 470px;
+   max-width: 470px;
   padding: 15px 0 50px 0;
   line-height: 1.5rem;
   @media (max-width: 960px) {
-    padding: 15px 0 50px 0;
+    padding: 15px 10px 50px 0;
     text-align: center;
     max-width: 100%;
   }
 `;
 
+
 const HeadingTag = styled.div`
   display: none;
   @media (max-width: 960px) {
     display: block;
-    color: white;
-    text-transform: uppercase;
+    opacity:100%;
+    color:white;
+    text-transform:uppercase;
     text-align: center;
-    font-weight: 700;
-    opacity: 100%;
+    font-weight:700;
     margin-bottom: 20px;
     position: absolute;
     top: 50%;
@@ -134,13 +171,13 @@ const HeadingTag = styled.div`
     font-size: 1.5rem;
   }
 
-  @media (max-width: 600px) {
+   @media (max-width: 600px) {
     display: block;
-    color: white;
-    opacity: 100%;
-    text-transform: uppercase;
+    opacity:100%;
+    color:white;
+    text-transform:uppercase;
     text-align: center;
-    font-weight: 700;
+    font-weight:700;
     margin-bottom: 20px;
     position: absolute;
     top: 35%;
@@ -151,11 +188,13 @@ const HeadingTag = styled.div`
   }
 `;
 
+
 const BtnWrapper = styled.div`
-  display: block;
-  width: 80%;
-  margin-bottom: 30px;
-  font-weight: 700;
+  
+ display: block;
+ width:80%;
+ margin-bottom:30px;
+ font-weight:700;
   @media (max-width: 960px) {
     display: block;
     position: absolute;
@@ -164,11 +203,11 @@ const BtnWrapper = styled.div`
     bottom: 20px;
     transform: translateX(-50%);
     z-index: 10;
-    font-weight: 700;
+    font-weight:700;
   }
 `;
 const GreyDiv = styled.div`
-  width: 30%;
+    width: 30%;
   height: 700px;
   position: absolute;
   top: 0;
@@ -183,9 +222,10 @@ const ImageWrapper = styled.div`
   justify-content: flex-end;
   position: relative;
   z-index: 9;
-
   @media (max-width: 960px) {
     width: 100%;
+      filter: brightness(0.5); /* Darkens image by reducing brightness */
+
     justify-content: center;
   }
 `;
@@ -199,11 +239,11 @@ const QuoteWrapper = styled.div`
   position: absolute;
   left: 0;
   top: 40%;
-
+  
   max-width: 330px;
   padding: 30px;
   z-index: 99;
-
+  
   @media (max-width: 960px) {
     left: 50%;
     display:none !important;
@@ -218,13 +258,13 @@ const QuoteWrapper = styled.div`
   }
 `;
 const QuotesWrapper = styled.div`
-  position: absolute;
-
+    position: absolute;
+    
   left: -20px;
   top: -10px;
 `;
 const DotsWrapper = styled.div`
- position: absolute;
+  position: absolute;
   right: -100px;
   bottom: 100px;
   z-index: 2;
@@ -235,3 +275,5 @@ const DotsWrapper = styled.div`
     display: none;
   }
 `;
+
+
