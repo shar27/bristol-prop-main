@@ -24,7 +24,7 @@ export default function Contact() {
               © {getCurrentYear()} - <span className="purpleColor font13">Property Maintenance Liverpool</span> All Right Reserved
             </StyleP> */}
             <StyleP className="whiteColor font13">
-             <h6 className="whiteColor font13">Leeds Property Maintenance is 
+             <h6 className="whiteColor font13">Bristol Property Maintenance is 
              trading name for <br/> SWIFT UK PROPERTY INVESTMENTS LTD. <br/>
              Company number: 15244665
              
@@ -40,10 +40,10 @@ export default function Contact() {
     
       <li className="semiBold font15 pointer">
               <a
-                href="mailto:hello@leeds-property-maintenance.co.uk  "
+                href="mailto:hello@bristolpropertymaintenance.co.uk  "
                 
               >
-                📧 hello@leeds-property-maintenance.co.uk  
+                📧 hello@bristolpropertymaintenance.co.uk  
               </a>
           </li>
           <li className="semiBold font15 pointer">
