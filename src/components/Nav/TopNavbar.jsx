@@ -43,7 +43,7 @@ export default function TopNavbar() {
         <a href="mailto:hello@bristolpropertymaintenance.co.uk">
           📧 hello@bristolpropertymaintenance.co.uk
         </a>
-        <a href="tel:015138803613"
+        <a href="tel:01172990185"
          onClick={handleCallClick}
         >📞 0117 299 0185</a>
       </ContactInfoSmallScreen>
@@ -209,7 +209,7 @@ export default function TopNavbar() {
                 📧 hello@bristolpropertymaintenance.co.uk
               </a>
               <br />
-              <a href="tel:01513880361" 
+              <a href="tel:01172990185" 
                onClick={handleCallClick}
               style={{ padding: "10px 30px 10px 0" }}
              
