@@ -45,7 +45,7 @@ export default function TopNavbar() {
         </a>
         <a href="tel:015138803613"
          onClick={handleCallClick}
-        >📞 0333 360 6113</a>
+        >📞 0117 299 0185</a>
       </ContactInfoSmallScreen>
       <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       {sidebarOpen && <Backdrop toggleSidebar={toggleSidebar} />}
@@ -215,7 +215,7 @@ export default function TopNavbar() {
              
 
               >
-                Call today 📞 0333 360 6113
+                Call today 📞 0117 299 0185
               </a>
             </li>
           </UlWrapperRight>
