@@ -12,7 +12,7 @@ const WhatsappIcon = () => {
     // Google Ads conversion tracking
     if (typeof window.gtag === 'function') {
       window.gtag('event', 'conversion', {
-        send_to: 'AW-11182108205/RvGwCMfJhbEaEK3chdQp',
+        send_to: 'AW-11182108205/SOsbCM_bnNkaEK3chdQp',
         event_callback: () => {
           window.open(url, '_blank');
         }
@@ -23,7 +23,7 @@ const WhatsappIcon = () => {
     }
   };
 
-  
+
 
   return (
     <div
