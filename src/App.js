@@ -8,7 +8,6 @@ import Landing         from './screens/Landing.jsx';
 import Landlords       from './screens/Landlords.jsx';
 import JoineryServices from './screens/JoineryPage.jsx';
 import Commercial      from './screens/Commercial.jsx';
-import FinancePage     from './screens/FinancePage.jsx';
 import BlogList        from './screens/BlogList.jsx';     // NEW
 import BlogPost        from './screens/BlogPost.jsx';     // EXISTING
 import ThankYou        from './screens/ThankYou.jsx';
