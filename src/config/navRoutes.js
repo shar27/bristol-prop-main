@@ -32,4 +32,4 @@ const navRoutes = {
     'clifton-handyman': 'clifton-handyman'
 };
 
-module.exports = navRoutes;
+export default navRoutes;
