@@ -4,15 +4,17 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 
 // Screens
-import Landing          from './screens/Landing.jsx';
-import Landlords        from './screens/Landlords.jsx';
-import DynamicPage      from './components/DynamicPage.jsx';
-import Commercial       from './screens/Commercial.jsx';
-import ThankYou         from './screens/ThankYou.jsx';
-import JoineryServices  from './screens/JoineryPage.jsx';
-import BlogPost         from './screens/BlogPost.jsx';
+import Landing         from './screens/Landing.jsx';
+import Landlords       from './screens/Landlords.jsx';
+import JoineryServices from './screens/JoineryPage.jsx';
+import Commercial      from './screens/Commercial.jsx';
+import FinancePage     from './screens/FinancePage.jsx';
+import BlogList        from './screens/BlogList.jsx';     // NEW
+import BlogPost        from './screens/BlogPost.jsx';     // EXISTING
+import ThankYou        from './screens/ThankYou.jsx';
+import DynamicPage     from './components/DynamicPage.jsx';
 
-// Styles for carousel
+// Styles
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
@@ -21,34 +23,24 @@ export default function App() {
     <Router>
       <>
         <Helmet>
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link
-            rel="preconnect"
-            href="https://fonts.gstatic.com"
-            crossOrigin="true"
-          />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Khula:wght@400;600;800&display=swap"
-            rel="stylesheet"
-          />
+          {/* your fonts… */}
         </Helmet>
 
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/landlords" element={<Landlords />} />
-          <Route path="/commercial" element={<Commercial />} />
           <Route path="/joinery" element={<JoineryServices />} />
+          <Route path="/commercial" element={<Commercial />} />
           <Route path="/thankyou" element={<ThankYou />} />
 
-          {/* ← New Strapi-powered blog route */}
+          {/* List all blog posts */}
+          <Route path="/blog" element={<BlogList />} />
+
+          {/* Single blog post by slug */}
           <Route path="/blog/:slug" element={<BlogPost />} />
 
-
-          {/* Catch-all dynamic page (keep after /blog/:slug) */}
+          {/* Fallback dynamic pages */}
           <Route path="/:slug" element={<DynamicPage />} />
-
-          {/* Duplicate thankyou can be removed if desired */}
-          <Route path="/thankyou" element={<ThankYou />} />
         </Routes>
       </>
     </Router>
