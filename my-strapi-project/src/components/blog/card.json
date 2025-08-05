@@ -1,0 +1,20 @@
+{
+  "collectionName": "components_blog_cards",
+  "info": {
+    "displayName": "Card",
+    "icon": "discuss"
+  },
+  "options": {},
+  "attributes": {
+    "Title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "blocks"
+    },
+    "backgroundColor": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}
