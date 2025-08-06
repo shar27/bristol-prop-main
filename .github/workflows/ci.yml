@@ -68,10 +68,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run Semgrep
-        uses: returntocorp/semgrep-action@v2
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
-          config: p/ci
+          python-version: '3.x'
+
+      - name: Install Semgrep
+        run: pip install semgrep
+
+      - name: Run Semgrep scan (warnings only)
+        run: semgrep --config p/ci .
         continue-on-error: true
 
   # ───────────────────────────────────────────────
