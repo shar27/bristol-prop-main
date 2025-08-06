@@ -7,7 +7,28 @@ on:
   pull_request: {}
 
 jobs:
+  security-scan:
+    name: 🛡️ Trivy Vulnerability Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run Trivy scan (warnings only)
+        uses: aquasecurity/trivy-action@v0.0.28
+        continue-on-error: true
+        with:
+          scan-type: fs
+          dir: .
+          vuln-type: os,library
+          severity: HIGH, CRITICAL
+          ignore-unfixed: true
+
+
   test-and-build:
+    name: 🏗️ Test & Build
+    needs: security-scan
     runs-on: ubuntu-latest
 
     strategy:
