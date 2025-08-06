@@ -1,0 +1,15 @@
+[[rules]]
+id = "GITLEAKS-RECAPTCHA-PUBLIC"
+description = "ReCAPTCHA site key (public)"
+# regex matches the typical Recaptcha v2/v3 sitekey format
+regex = '''6Lf[a-zA-Z0-9_-]{35}'''
+allowlist = ["ReCAPTCHA public key"]
+
+[[rules]]
+id = "GITLEAKS-EMAILJS-PUBLIC"
+description = "EmailJS public user key"
+# EmailJS user IDs are 27+ chars and often start with an alphanumeric
+regex = '''[a-zA-Z0-9]{27}'''
+allowlist = ["EmailJS public user key"]
+
+# You can add more sections here for other false positives…

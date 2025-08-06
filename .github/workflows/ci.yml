@@ -17,7 +17,7 @@ jobs:
       - name: Run Gitleaks
         uses: gitleaks/gitleaks-action@v2.3.9   # pinned to the latest v2.x release :contentReference[oaicite:0]{index=0}
         with:
-          args: "--path=."
+          args: --path=., --config=.gitleaks.toml
         # fail on any leak
         continue-on-error: false
 
