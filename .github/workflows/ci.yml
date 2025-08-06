@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run Gitleaks
-        uses: zricethezav/gitleaks-action@v8.9.0
+        uses: zricethezav/gitleaks-action@8.9.0
         with:
           args: "--path=."
         continue-on-error: false   # fail on any leak
