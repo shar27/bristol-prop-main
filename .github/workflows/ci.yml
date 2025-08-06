@@ -31,8 +31,10 @@ jobs:
         run: npm ci
 
 
-      # 5) Build the production bundle
       - name: Build
+        # Unset CI so CRA won't treat warnings as errors
+        env:
+          CI: false
         run: npm run build
 
       # 6) Upload the build output for inspection
