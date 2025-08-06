@@ -47,7 +47,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run OWASP Dependency-Check (warnings only)
-        uses: aslafy-z/owasp-dependency-check-action@v2
+        uses: aslafy-z/owasp-dependency-check-action@2
         with:
           scan: '.'                        # scan entire repo
           formats: 'HTML,XML,JSON'        # output formats
@@ -64,7 +64,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run Semgrep
-        uses: returntocorp/semgrep-action@v2
+        uses: returntocorp/semgrep-action@2
         with:
           config: p/ci   # community rule pack for CI
         continue-on-error: true
