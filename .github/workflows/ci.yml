@@ -1,34 +1,80 @@
-# .github/workflows/ci.yml
 name: CI
 
-# Trigger on any push or PR to any branch
 on:
-  push:    {}
+  push:         {}
   pull_request: {}
 
 jobs:
-  security-scan:
-    name: 🛡️ Trivy Vulnerability Scan
+  # ───────────────────────────────────────────────
+  # 1) Secret Scanning (Gitleaks)
+  # ───────────────────────────────────────────────
+  secret-scan:
+    name: 🔑 Gitleaks Secret Scan
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - name: Run Gitleaks
+        uses: zricethezav/gitleaks-action@v8.9.0
+        with:
+          args: "--path=."
+        continue-on-error: false   # fail on any leak
 
-      - name: Run Trivy scan (warnings only)
+  # ───────────────────────────────────────────────
+  # 2) OS & Library Scan (Trivy)
+  # ───────────────────────────────────────────────
+  trivy-scan:
+    name: 🛡️ Trivy FS Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Trivy (warnings only)
         uses: aquasecurity/trivy-action@0.28.0
         continue-on-error: true
         with:
           scan-type: fs
           dir: .
           vuln-type: os,library
-          severity: CRITICAL
+          severity: HIGH,CRITICAL
           ignore-unfixed: true
 
+  # ───────────────────────────────────────────────
+  # 3) SCA with OWASP Dependency-Check
+  # ───────────────────────────────────────────────
+  dependency-check:
+    name: 📦 OWASP Dependency-Check
+    runs-on: ubuntu-latest
+    needs: [trivy-scan]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run OWASP Dependency-Check (warnings only)
+        uses: aslafy-z/owasp-dependency-check-action@v2
+        with:
+          scan: '.'                        # scan entire repo
+          formats: 'HTML,XML,JSON'        # output formats
+          fail-on-severity: 'CRITICAL'    # only fail on CRITICAL if you want; remove to just warn
+        continue-on-error: true
 
+  # ───────────────────────────────────────────────
+  # 4) SAST with Semgrep
+  # ───────────────────────────────────────────────
+  semgrep-scan:
+    name: 🔍 Semgrep SAST
+    runs-on: ubuntu-latest
+    needs: [dependency-check]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Semgrep
+        uses: returntocorp/semgrep-action@v2
+        with:
+          config: p/ci   # community rule pack for CI
+        continue-on-error: true
+
+  # ───────────────────────────────────────────────
+  # 5) Test, Audit & Build
+  # ───────────────────────────────────────────────
   test-and-build:
     name: 🏗️ Test & Build
-    needs: security-scan
+    needs: [secret-scan, trivy-scan, dependency-check, semgrep-scan]
     runs-on: ubuntu-latest
 
     strategy:
@@ -36,29 +82,27 @@ jobs:
         node-version: [18.x]
 
     steps:
-      # 1 Check out your repo
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      # 2) Set up Node.js & cache npm modules
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
 
-      # 3 Install dependencies
       - name: Install dependencies
         run: npm ci
 
+      - name: npm audit (warn only)
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
 
-      - name: Build
-        # Unset CI so CRA won't treat warnings as errors
+     
+      - name: Build (allow warnings)
         env:
           CI: false
         run: npm run build
 
-      # 6) Upload the build output for inspection
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
