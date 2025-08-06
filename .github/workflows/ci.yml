@@ -13,11 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Run Gitleaks
-        uses: zricethezav/gitleaks-action@8.9.0
+        uses: gitleaks/gitleaks-action@v2.3.9   # pinned to the latest v2.x release :contentReference[oaicite:0]{index=0}
         with:
           args: "--path=."
-        continue-on-error: false   # fail on any leak
+        # fail on any leak
+        continue-on-error: false
 
   # ───────────────────────────────────────────────
   # 2) OS & Library Scan (Trivy)
@@ -27,6 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Run Trivy (warnings only)
         uses: aquasecurity/trivy-action@0.28.0
         continue-on-error: true
@@ -46,13 +49,14 @@ jobs:
     needs: [trivy-scan]
     steps:
       - uses: actions/checkout@v3
-      - name: Run OWASP Dependency-Check (warnings only)
-        uses: aslafy-z/owasp-dependency-check-action@2
+
+      - name: Run Dependency-Check
+        uses: dependency-check/Dependency-Check_Action@main   # official Action on Marketplace :contentReference[oaicite:1]{index=1}
+        continue-on-error: true  # warnings only
         with:
-          scan: '.'                        # scan entire repo
-          formats: 'HTML,XML,JSON'        # output formats
-          fail-on-severity: 'CRITICAL'    # only fail on CRITICAL if you want; remove to just warn
-        continue-on-error: true
+          project: "${{ github.repository }}"
+          path: "."
+          format: "ALL"
 
   # ───────────────────────────────────────────────
   # 4) SAST with Semgrep
@@ -63,10 +67,11 @@ jobs:
     needs: [dependency-check]
     steps:
       - uses: actions/checkout@v3
+
       - name: Run Semgrep
-        uses: returntocorp/semgrep-action@2
+        uses: returntocorp/semgrep-action@v2
         with:
-          config: p/ci   # community rule pack for CI
+          config: p/ci
         continue-on-error: true
 
   # ───────────────────────────────────────────────
