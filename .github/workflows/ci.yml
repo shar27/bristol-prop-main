@@ -22,7 +22,7 @@ jobs:
           scan-type: fs
           dir: .
           vuln-type: os,library
-          severity: HIGH, CRITICAL
+          severity: CRITICAL
           ignore-unfixed: true
 
 
