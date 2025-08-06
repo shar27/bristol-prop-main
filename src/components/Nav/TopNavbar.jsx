@@ -143,6 +143,18 @@ export default function TopNavbar() {
            <RouterLink
                 className="pointer"
                 style={{ padding: "10px 15px" }}
+                to="/clearance"
+              >
+                Clearance
+              </RouterLink>
+          </li>
+          <li
+            className="dropdown-item"
+            style={{ padding: "10px 20px", cursor: "pointer" }}
+          >
+           <RouterLink
+                className="pointer"
+                style={{ padding: "10px 15px" }}
                 to="/landlords"
               >
                 Guaranteed Rent
