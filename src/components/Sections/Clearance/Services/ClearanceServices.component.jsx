@@ -1,4 +1,4 @@
-import ClearanceServiceList from '../../../Elements/Clearance/ClearanceServiceList.component';
+import ClearanceServiceList from '../../../Elements/Clearance/Service/ClearanceServiceList.component';
 import Button, { BUTTON_TYPE_CLASSES } from '../../../Buttons/buton.component';
 import {
     Home,

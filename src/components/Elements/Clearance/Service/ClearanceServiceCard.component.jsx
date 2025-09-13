@@ -17,7 +17,7 @@ const ClearanceServiceCard = ({ service }) => {
         <ServiceCard>
             <CardHeader>
                 <IconContainer>
-                    <service.icon style={{color: '#FFF'}}/>
+                    <service.icon style={{ color: '#FFF' }} />
                 </IconContainer>
                 <CardTitle>
                     {service.title}
