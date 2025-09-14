@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { Star } from 'lucide-react'
-
 import ReviewProvider, { PROVIDER_TYPE_CLASSES } from './ReviewProvider.component';
+import Star from '../../Star/Star.component';
 
 import {
     ReviewCardContainer,
@@ -10,6 +9,7 @@ import {
     ReviewLink,
     ReviewCard,
     ReviewStarContainer,
+    ReviewCardTitle,
     ReviewCardContent,
     ReviewInfoContainer,
     ReviewAuthor,
@@ -50,11 +50,15 @@ const ClearanceReviewCard = ({ review }) => {
 
             <ReviewCard className='content'>
                 <ReviewStarContainer>
-                    <Star />
+                    <Star rating={review.rating}/>
                     <ReviewProvider providerType={provider}>
                         {review.review_site}
                     </ReviewProvider>
                 </ReviewStarContainer>
+
+                <ReviewCardTitle>
+                    {review.title}
+                </ReviewCardTitle>
 
                 <ReviewCardContent>
                     {content}

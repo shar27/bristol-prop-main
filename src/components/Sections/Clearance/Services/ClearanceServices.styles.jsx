@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const ClearanceContainer = styled.div`
+export const ClearanceContainer = styled.section`
     display: flex;
     flex-direction: column;
     gap: 1rem;

@@ -1,11 +1,8 @@
 import styled from "styled-components";
 
 
-export const Wrapper = styled.div`
-  font-family: Arial, sans-serif;
-`;
-
 export const BannerContainer = styled.section`
+    font-family: Arial, sans-serif;
     position: relative;
     height: 100vh;
     width: 100%;

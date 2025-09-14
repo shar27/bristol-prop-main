@@ -78,7 +78,7 @@ const clearance_services = [
 const ClearanceServices = () => {
     return (
         <>
-            <ClearanceContainer>
+            <ClearanceContainer id='services'>
                 <ClearanceHeadingContainer>
                     <ClearanceTitle>Our Clearance Services</ClearanceTitle>
                     <ClearanceSubtitle>

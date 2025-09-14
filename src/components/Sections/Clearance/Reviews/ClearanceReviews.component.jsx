@@ -8,9 +8,10 @@ import {
     ReviewsHeader,
     ReviewsTitle,
     ReviewsSubtitle,
-    ReviewsContainer,
     ReviewsFactContainer,
-    ReviewsFact
+    ReviewsFact,
+    FactTitle,
+    FactSubtitle
 } from './ClearanceReviews.styles'
 
 
@@ -24,7 +25,7 @@ const reviews = [
         author: 'Ann Dickenson',
         review_site: 'Google',
         date: new Date("2025-07-25"),
-        rating: 5,
+        rating: 3,
         url: 'https://uk.trustpilot.com/reviews/6883339c1a077d8a853f34ca'
     },
     {
@@ -40,7 +41,7 @@ const reviews = [
         author: 'Deborah Muthike',
         review_site: 'TrustPilot',
         date: new Date("2025-06-05"),
-        rating: 5,
+        rating: 1,
         url: 'https://uk.trustpilot.com/reviews/68417ed7c2498b57dc992b00'
     },
     {
@@ -67,7 +68,8 @@ const reviews = [
 
 const ClearanceReviews = () => {
     return (
-        <ReviewsSection>
+        <ReviewsSection id='reviews'>
+
             <ReviewsHeader>
                 <ReviewsTitle>
                     What Our Customers Say
@@ -76,14 +78,28 @@ const ClearanceReviews = () => {
                     Don't just take our word for it. Here's what our satisfied customers have to say about our house clearance services.
                 </ReviewsSubtitle>
             </ReviewsHeader>
-            <ReviewsContainer>
-                <ClearanceReviewList clearanceReviews={reviews} />
-            </ReviewsContainer>
+            
+            <ClearanceReviewList clearanceReviews={reviews} />
+            
             <ReviewsFactContainer>
                 <ReviewsFact>
-
+                    <FactTitle>500+</FactTitle>
+                    <FactSubtitle>Properties Cleared</FactSubtitle>
+                </ReviewsFact>
+                <ReviewsFact>
+                    <FactTitle>95%</FactTitle>
+                    <FactSubtitle>Waste Recycled</FactSubtitle>
+                </ReviewsFact>
+                <ReviewsFact>
+                    <FactTitle>24/7</FactTitle>
+                    <FactSubtitle>Emergency Service</FactSubtitle>
+                </ReviewsFact>
+                <ReviewsFact>
+                    <FactTitle>10+</FactTitle>
+                    <FactSubtitle>Years Experience</FactSubtitle>
                 </ReviewsFact>
             </ReviewsFactContainer>
+
         </ReviewsSection>
     );
 };

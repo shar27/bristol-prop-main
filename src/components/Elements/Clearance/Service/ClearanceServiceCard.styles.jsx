@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const ServiceCard = styled.div`
-    background-color: lightgray;
+    background-color: rgba(232, 232, 223, 0.6);
     padding: 2rem;
     border-radius: 0.5rem;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);

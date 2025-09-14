@@ -74,6 +74,12 @@ export const ReviewStarContainer = styled.div`
     margin-bottom: 0.75rem;
 `
 
+export const ReviewCardTitle = styled.h3`
+    color: #0B0959;
+    font-size: 1rem;
+    line-height: calc(1.5 / 1);
+`
+
 export const ReviewCardContent = styled.p`
     color: #494949;
     padding: 0 0.5rem;
