@@ -4,10 +4,18 @@ export const ClearanceContainer = styled.section`
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    padding: 4rem 2rem;
+    padding: 4rem 8rem;
 
     @media (width <= 850px) {
         gap: unset;
+    }
+
+    @media (max-width: 678px) {
+        padding: 4rem 4rem;
+    }
+
+    @media (max-width: 478px) {
+        padding: 4rem 1.5rem;
     }
 `
 

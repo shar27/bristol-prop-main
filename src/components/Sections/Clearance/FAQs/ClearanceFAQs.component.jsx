@@ -3,7 +3,13 @@ import React from 'react'
 import Accordion from '../../../Elements/Accordion/Accordion.component';
 
 import {
-    FAQContainer
+    FAQSection,
+    FAQHeader,
+    FAQTitle,
+    FAQSubtitle,
+    FAQContainer,
+    FAQContactContainer,
+    FAQContact
 } from './ClearanceFAQs.styles';
 
 const faqs = [
@@ -51,13 +57,33 @@ const faqs = [
 
 const ClearanceFAQs = () => {
     return (
-        <FAQContainer>
-            {
-                faqs.map((faq, idx) => {
-                    return <Accordion question={faq.question} answer={faq.answer} key={`accordion-${idx}`} />
-                })
-            }
-        </FAQContainer>
+        <FAQSection id='faqs'>
+
+            <FAQHeader>
+                <FAQTitle>Frequently Asked Questions</FAQTitle>
+                <FAQSubtitle>Got questions? We've got answers. Here are the most common questions we receive about our house clearance services.</FAQSubtitle>
+            </FAQHeader>
+
+            <FAQContainer>
+                {
+                    faqs.map((faq, idx) => {
+                        return <Accordion question={faq.question} answer={faq.answer} key={`accordion-${idx}`} />
+                    })
+                }
+            </FAQContainer>
+
+            <FAQContactContainer>
+                <FAQContact href='tel:01172990185'>
+                    <span className='full-text'>Call: 0117 299 0185</span>
+                    <span className='short-text'>Call</span>
+                </FAQContact>
+                <FAQContact href='mailto:hello@bristolpropertymaintenance.co.uk'>
+                    <span className='full-text'>Email: hello@bristolpropertymaintenance.co.uk</span>
+                    <span className='short-text'>Email</span>
+                </FAQContact>
+            </FAQContactContainer>
+
+        </FAQSection>
     );
 };
 

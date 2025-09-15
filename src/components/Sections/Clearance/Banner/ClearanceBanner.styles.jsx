@@ -34,29 +34,62 @@ export const BannerOverlay = styled.div`
     background-color: rgba(0, 0, 0, 0.5);
     height: 100%;
     width: 100%;
-    //padding: 0 10rem;
+    padding: 4rem 8rem;
+
+    @media (max-width: 678px) {
+        padding: 4rem 4rem;
+    }
+
+    @media (max-width: 478px) {
+        padding: 4rem 1.5rem;
+    }
 `
 
 export const BannerTitleContainer = styled.div`
     text-align: center;
-    max-width: 70%;
+    max-width: 940px;
 `
 
 export const BannerTitle = styled.h2`
     color: #FFFFFF;
     font-size: 3rem;
     margin-bottom: 0.5rem;
+
+    @media (max-width: 678px) {
+        font-size: 2.5rem;
+    }
+
+    @media (max-width: 510px) {
+        font-size: 2rem;
+    }
 `
 
 export const BannerSubTitle = styled.p`
     color: #FFFFFF;
     font-size: 1.5rem;
+
+    @media (max-width: 678px) {
+        font-size: 1.5rem;
+    }
+
+    @media (max-width: 510px) {
+        font-size: 1.25rem;
+    }
 `
 
 export const BannerButtonsContainer = styled.div`
     display: flex;
     gap: 3rem;
     margin: 2rem auto;
+
+    @media (max-width: 765px) {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    @media (max-width: 510px) {
+        
+    }
 `
 
 export const TagContainer = styled.div`

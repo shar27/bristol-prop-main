@@ -5,7 +5,8 @@ import {
     Truck,
     Recycle,
     Users,
-    BriefcaseBusiness
+    BriefcaseBusiness,
+    Clock
 } from 'lucide-react';
 
 import { 
@@ -71,6 +72,17 @@ const clearance_services = [
             'Valuables identification',
             'Document handling',
             'Family liaison'
+        ]
+    },
+    {
+        icon: Clock,
+        title: 'Emergency Clearance',
+        description: 'Urgent clearance needed? We offer 24/7 emergency services for immediate requirements.',
+        features: [
+            '24/7 availability',
+            'Rapid response',
+            'Same day completion',
+            'Low cost rate'
         ]
     },
 ];

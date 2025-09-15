@@ -4,6 +4,14 @@ import styled from 'styled-components'
 export const ReviewsSection = styled.section`
     padding: 4rem 8rem;
     background-color: #FFF;
+
+    @media (max-width: 678px) {
+        padding: 4rem 4rem;
+    }
+
+    @media (max-width: 478px) {
+        padding: 4rem 1.5rem;
+    }
 `
 
 export const ReviewsHeader = styled.div`
@@ -34,7 +42,6 @@ export const ReviewsFactContainer = styled.div`
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
-    margin-bottom: 2rem;
     margin-inline: auto;
     max-width: 48rem;
 
