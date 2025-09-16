@@ -38,7 +38,7 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
             Home
           </Link>
         </li>
-        <li className="semiBold font15 pointer">
+        <li>
           <Link
             to="/#services"
             onClick={() => handleScroll("services")}
@@ -46,6 +46,16 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
             style={{ padding: "10px 15px", display: 'block' }}
           >
             Services
+          </Link>
+        </li>
+        <li className="semiBold font15 pointer">
+          <Link
+            to="/clearance"
+            onClick={() => handleScroll("banner")}
+            className="whiteColor"
+            style={{ padding: "10px 15px", display: 'block' }}
+          >
+            Clearance
           </Link>
         </li>
         <li className="semiBold font15 pointer">
@@ -79,15 +89,15 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
           </Link>
         </li>
         <li className="semiBold font15 pointer">
-                      <Link
-                      
-                        className="pointer whiteColor"
-                        style={{ padding: "10px 15px" }}
-                        to="/commercial"
-                      >
-                        Commercial
-                      </Link>
-                    </li>
+          <Link
+
+            className="pointer whiteColor"
+            style={{ padding: "10px 15px" }}
+            to="/commercial"
+          >
+            Commercial
+          </Link>
+        </li>
         <li className="semiBold font15 pointer">
           <Link
             to="/#contact"
