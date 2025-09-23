@@ -255,7 +255,7 @@ const ContactInfoSmallScreen = styled.div`
     position: fixed;
     width: 100%;
     display: block;
-    z-index: 999;
+    z-index: 100;
     font-size:14px;
       text-align: center;
   }
@@ -266,7 +266,7 @@ const Wrapper = styled.nav`
   position: fixed;
   top: 0px;
   left: 0;
-  z-index: 999;
+  z-index: 100;
   transition: height 0.3s ease-in-out, top 0.3s ease-in-out;
 
   @media (max-width: 760px) {
@@ -275,7 +275,7 @@ const Wrapper = styled.nav`
     position: fixed;
     top: 80px;
     left: 0;
-    z-index: 999;
+    z-index: 100;
     transition: height 0.3s ease-in-out, top 0.3s ease-in-out;
   }
 `;

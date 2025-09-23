@@ -26,19 +26,39 @@ export const BaseButton = styled.button`
 
 export const FeatureButton = styled(BaseButton)`
     min-width: 270px;
-    background: linear-gradient(30deg,rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 59%, rgba(0, 212, 255, 1) 100%);
+    background: linear-gradient(30deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 59%, rgba(0, 212, 255, 1) 100%);
     color: #FFF;
     border: none;
     
     &:hover {
         transition-property: color, background-color, background, transform, scale;
-        transition-duration: 500ms
+        transition-duration: 500ms;
         transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
         scale: 105% 105%;
-        background: linear-gradient(30deg,hsla(243, 100%, 17.1%, 1.00) 0%, hsla(240, 86.2%, 35.5%, 1.00) 35%, hsla(190, 100%, 60%, 1.00) 100%);
-        color: #fff;
+        background: linear-gradient(30deg, hsla(243, 100%, 17.1%, 1.00) 0%, hsla(240, 86.2%, 35.5%, 1.00) 35%, hsla(190, 100%, 60%, 1.00) 100%);
+        color: #FFF;
         border: none;
     }
 `
 
-//background: linear-gradient(210deg,rgba(25, 124, 237, 1) 0%, rgba(97, 117, 190, 1) 35%, rgba(0, 136, 255, 1) 100%);
+export const FormButton = styled(FeatureButton)`
+    min-width: unset;
+
+    &:hover {
+        scale: unset;
+    }
+`
+
+export const GhostButton = styled(BaseButton)`
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: unset;
+    color: hsl(220 15% 60%);
+
+    &:hover {
+        background-color: transparent;
+        color: hsl(220 15% 15%);
+        transition-property: color, background-color, background;
+        transition-duration: 300ms;
+    }
+`
