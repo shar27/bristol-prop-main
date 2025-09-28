@@ -32,7 +32,7 @@ import {
 
 const modalRoot = document.getElementById('modal-root');
 
-const QuoteModal = ({ handleModalClose }) => {
+const QuoteModal = ({ handleModalClose, modalOpen, formRef, emailDisplayMessage, sendEmail }) => {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -48,6 +48,8 @@ const QuoteModal = ({ handleModalClose }) => {
 
     const handleQuoteSubmission = (event) => {
         event.preventDefault();
+
+        sendEmail();
 
         console.log(formData);
         console.log(uploadedFiles);
@@ -99,10 +101,11 @@ const QuoteModal = ({ handleModalClose }) => {
                         </QuoteModalTitle>
                         <QuoteModalDescription>Fill out the form below and we'll provide you with a detailed quote for your house clearance needs.</QuoteModalDescription>
                     </QuoteModalHeader>
+                    {emailDisplayMessage}
 
 
                     {/* Form */}
-                    <QuoteModalForm onSubmit={handleQuoteSubmission}>
+                    <QuoteModalForm ref={formRef} onSubmit={handleQuoteSubmission} encType='multipart/form-data'>
 
 
                         {/* Personal Details */}
@@ -111,6 +114,7 @@ const QuoteModal = ({ handleModalClose }) => {
                                 <QuoteModalFormLabel htmlFor='name'>Full Name *</QuoteModalFormLabel>
                                 <QuoteModalFormInput
                                     id='name'
+                                    name='name'
                                     value={formData.name}
                                     onChange={(e) => handleInputChange(e)}
                                     placeholder='John Smith'
@@ -121,6 +125,7 @@ const QuoteModal = ({ handleModalClose }) => {
                                 <QuoteModalFormLabel htmlFor='email'>Email Address *</QuoteModalFormLabel>
                                 <QuoteModalFormInput
                                     id='email'
+                                    name='email'
                                     type='email'
                                     value={formData.email}
                                     onChange={(e) => handleInputChange(e)}
@@ -135,6 +140,7 @@ const QuoteModal = ({ handleModalClose }) => {
                                 <QuoteModalFormLabel htmlFor='phone'>Phone Number *</QuoteModalFormLabel>
                                 <QuoteModalFormInput
                                     id='phone'
+                                    name='phone'
                                     type='tel'
                                     value={formData.phone}
                                     onChange={(e) => handleInputChange(e)}
@@ -146,6 +152,7 @@ const QuoteModal = ({ handleModalClose }) => {
                                 <QuoteModalFormLabel htmlFor='postcode'>Post Code *</QuoteModalFormLabel>
                                 <QuoteModalFormInput
                                     id='postcode'
+                                    name='postcode'
                                     value={formData.postcode}
                                     onChange={(e) => handleInputChange(e)}
                                     placeholder='SW1A 1AA'
@@ -199,7 +206,7 @@ const QuoteModal = ({ handleModalClose }) => {
 
 
                         {/* Photo Upload Section */}
-                        <QuoteModal1Field>
+                        {/* <QuoteModal1Field>
                             <QuoteModalFormLabel htmlFor='photos'>Upload Photos (Optional)</QuoteModalFormLabel>
                             <QuoteModalUploadContainer>
                                 <div style={{ textAlign: 'center' }}>
@@ -211,6 +218,7 @@ const QuoteModal = ({ handleModalClose }) => {
                                             </QuoteModalFormSpan>
                                             <QuoteModalFormInput
                                                 id='file-upload'
+                                                name='files'
                                                 type='file'
                                                 multiple
                                                 accept='image/*'
@@ -228,11 +236,11 @@ const QuoteModal = ({ handleModalClose }) => {
                                         PNG, JPG, GIF up to 10MB each
                                     </QuoteModalDescription>
                                 </div>
-                            </QuoteModalUploadContainer>
+                            </QuoteModalUploadContainer> */}
 
 
                             {/* Uploaded Files Preview */}
-                            {uploadedFiles.length > 0 && (
+                            {/* {uploadedFiles.length > 0 && (
                                 <QuoteModalFilePreviewContainer>
                                     {uploadedFiles.map((file, index) => (
                                         <QuoteModalFilePreview key={`file-${index}`} className="group">
@@ -241,7 +249,8 @@ const QuoteModal = ({ handleModalClose }) => {
                                                     height: '1rem',
                                                     width: '1rem',
                                                     color: 'hsl(220 15% 45%)',
-                                                    marginRight: '0.5rem'}}
+                                                    marginRight: '0.5rem'
+                                                }}
                                                 />
                                                 <QuoteModalFileName className="text-xs text-muted-foreground truncate flex-1">
                                                     {file.name}
@@ -251,9 +260,9 @@ const QuoteModal = ({ handleModalClose }) => {
                                                     type="button"
                                                     onClick={() => removeFile(index)}
                                                     style={{
-                                                        height: '1rem', 
-                                                        width: '1rem', 
-                                                        padding: '0', 
+                                                        height: '1rem',
+                                                        width: '1rem',
+                                                        padding: '0',
                                                         marginLeft: '0.25rem'
                                                     }}
                                                 >
@@ -267,7 +276,7 @@ const QuoteModal = ({ handleModalClose }) => {
                                     ))}
                                 </QuoteModalFilePreviewContainer>
                             )}
-                        </QuoteModal1Field>
+                        </QuoteModal1Field> */}
 
 
                         {/* Additional Details */}
@@ -275,6 +284,7 @@ const QuoteModal = ({ handleModalClose }) => {
                             <QuoteModalFormLabel htmlFor="message">Additional Details</QuoteModalFormLabel>
                             <QuoteModalFormTextArea
                                 id="message"
+                                name="message"
                                 required
                                 value={formData.message}
                                 onChange={(e) => handleInputChange(e)}
@@ -297,7 +307,7 @@ const QuoteModal = ({ handleModalClose }) => {
                     <QuoteXButton onClick={() => handleModalClose()}>
                         <LucideX />
                     </QuoteXButton>
-                    
+
 
                 </QuoteModalContent>
             </QuoteModalContainer>
