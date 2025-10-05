@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { Recycle, CheckCircle, Shield } from 'lucide-react';
+import { Link as RouterLink } from "react-router-dom";
 
 import emailjs from "@emailjs/browser";
 
@@ -61,7 +62,7 @@ const ClearanceBanner = () => {
         // }
 
         emailjs
-            .sendForm("service_go85cgq", "template_zjh82na", formEl, "n3cGJxtvclpiQjFrD")
+            .sendForm("service_go85cgq", "template_9r8mipf", formEl, "n3cGJxtvclpiQjFrD")
             .then(
                 (result) => {
                     console.log(result.text);
@@ -104,7 +105,7 @@ const ClearanceBanner = () => {
                         >
                             Get a Quote
                         </Button>
-                        <Button>View Services</Button>
+                        <RouterLink to='/clearance/pile-of-rubbish' ><Button>Book No</Button></RouterLink>
                     </BannerButtonsContainer>
                     <TagContainer>
                         <TagItem>

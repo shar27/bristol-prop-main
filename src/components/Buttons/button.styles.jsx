@@ -62,3 +62,18 @@ export const GhostButton = styled(BaseButton)`
         transition-duration: 300ms;
     }
 `
+
+export const InlineButton = styled(BaseButton)`
+    padding: 0.375rem 1rem;
+    font-size: 0.875rem;
+    line-height: calc(1.25/0.875);
+    font-weight: 500;
+    border: 1px solid hsl(220 15% 15%);
+    border-radius: 999px;
+    background-color: #FFF;
+
+    &:hover {
+        background-color: #F9F9F9F9;
+        color: unset;
+    }
+`
