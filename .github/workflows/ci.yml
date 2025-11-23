@@ -1,0 +1,128 @@
+name: CI
+
+on:
+  push:         {}
+  pull_request: {}
+
+jobs:
+  # ───────────────────────────────────────────────
+  # 1) Secret Scanning (Gitleaks)
+  # ───────────────────────────────────────────────
+  secret-scan:
+    name: 🔑 Gitleaks Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0   # scan full history if you want
+
+      - name: Run Gitleaks (with SARIF output)
+        uses: gitleaks/gitleaks-action@v2.3.9
+        with:
+          # 1) Tell Gitleaks where your config is
+          config: .gitleaks.toml
+          # 2) Force SARIF output to results.sarif
+          output: results.sarif
+          # 3) Extra CLI args to ensure SARIF format is generated
+          args: detect --source=. --report-formats=sarif --report-path=results.sarif
+        continue-on-error: false   # fail on any *real* leak
+
+  # ───────────────────────────────────────────────
+  # 2) OS & Library Scan (Trivy)
+  # ───────────────────────────────────────────────
+  trivy-scan:
+    name: 🛡️ Trivy FS Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run Trivy (warnings only)
+        uses: aquasecurity/trivy-action@0.28.0
+        continue-on-error: true
+        with:
+          scan-type: fs
+          dir: .
+          vuln-type: os,library
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+
+  # ───────────────────────────────────────────────
+  # 3) SCA with OWASP Dependency-Check
+  # ───────────────────────────────────────────────
+  dependency-check:
+    name: 📦 OWASP Dependency-Check
+    runs-on: ubuntu-latest
+    needs: [trivy-scan]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run Dependency-Check
+        uses: dependency-check/Dependency-Check_Action@main   # official Action on Marketplace :contentReference[oaicite:1]{index=1}
+        continue-on-error: true  # warnings only
+        with:
+          project: "${{ github.repository }}"
+          path: "."
+          format: "ALL"
+
+  # ───────────────────────────────────────────────
+  # 4) SAST with Semgrep
+  # ───────────────────────────────────────────────
+  semgrep-scan:
+    name: 🔍 Semgrep SAST
+    runs-on: ubuntu-latest
+    needs: [dependency-check]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Semgrep
+        run: pip install semgrep
+
+      - name: Run Semgrep scan (warnings only)
+        run: semgrep --config p/ci .
+        continue-on-error: true
+
+  # ───────────────────────────────────────────────
+  # 5) Test, Audit & Build
+  # ───────────────────────────────────────────────
+  test-and-build:
+    name: 🏗️ Test & Build
+    needs: [secret-scan, trivy-scan, dependency-check, semgrep-scan]
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: npm audit (warn only)
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
+
+     
+      - name: Build (allow warnings)
+        env:
+          CI: false
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-build
+          path: build

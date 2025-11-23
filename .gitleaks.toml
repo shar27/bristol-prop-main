@@ -1,0 +1,11 @@
+# Title is optional but helpful
+title = "Gitleaks allowlist for public keys"
+
+# Global allowlist: skip these exact public keys everywhere
+[allowlist]
+description  = "Whitelist public reCAPTCHA & EmailJS keys"
+regexTarget  = "match"      # match the secret itself
+regexes      = [
+  "6LfV9nkqAAAAAKJA-KJdoNsvQDXNTbBDIxkDXKbp",  # reCAPTCHA site key
+  "n3cGJxtvclpiQjFrD"                          # EmailJS public user ID
+]
