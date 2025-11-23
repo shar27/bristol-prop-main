@@ -52,9 +52,9 @@ export default function JoineryServices() {
           <p>All joiners are experienced and fully insured subcontractors.</p>
         </div>
       </FAQSection>
-   <section id="joinform"> 
-    <Contact/>
-    </section>
+      <section id="joinform">
+        <Contact />
+      </section>
       <Footer />
     </Wrapper>
   );
