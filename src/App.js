@@ -8,9 +8,10 @@ import DynamicPage from "./components/DynamicPage.jsx";
 import Commercial from '../src/screens/Commercial.jsx'
 import ThankYou from "./screens/ThankYou.jsx";
 import JoineryServices from "./screens/JoineryPage.jsx";
+import FinancePage from "./screens/FinancePage.jsx";
+import GetQuotePage from "./screens/GetQuotePage.jsx";  // NEW
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
-import FinancePage from "./screens/FinancePage.jsx";
 
 
 export default function App() {
@@ -27,11 +28,11 @@ export default function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/landlords" element={<Landlords />} />
           <Route path="/commercial" element={<Commercial/>}/>
-          <Route path="joinery" element={<JoineryServices/>}/>
-          <Route path="thankyou" element={<ThankYou/>}/>
-          <Route path=":slug" element={<DynamicPage/>}/>
-          <Route path="zero-percent-finance" element={<FinancePage/>}/>
-          <Route path="thankyou" element={<ThankYou/>}/>
+          <Route path="/joinery" element={<JoineryServices/>}/>
+          <Route path="/thankyou" element={<ThankYou/>}/>
+          <Route path="/zero-percent-finance" element={<FinancePage/>}/>
+          <Route path="/get-quote" element={<GetQuotePage/>}/> {/* NEW ROUTE */}
+          <Route path="/:slug" element={<DynamicPage/>}/>
         </Routes>
       </>
     </Router>
