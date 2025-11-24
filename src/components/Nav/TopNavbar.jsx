@@ -32,10 +32,10 @@ export default function TopNavbar() {
         value: 1.0,
         currency: 'GBP'
       });
-      
+
     }
   };
-  
+
 
   return (
     <>
@@ -44,7 +44,7 @@ export default function TopNavbar() {
           📧 hello@bristolpropertymaintenance.co.uk
         </a>
         <a href="tel:01172990185"
-         onClick={handleCallClick}
+          onClick={handleCallClick}
         >📞 0117 299 0185</a>
       </ContactInfoSmallScreen>
       <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
@@ -93,78 +93,90 @@ export default function TopNavbar() {
               </RouterLink>
             </li>
             <li
-      className="semiBold font15 pointer relative"
-      style={{ position: "relative" }}
-      onMouseEnter={toggleDropdown}
-      onMouseLeave={toggleDropdown}
-    >
-     
-      <span
-        className="pointer"
-        style={{ padding: "10px 15px", display: "inline-block" }}
-      >
-        <RouterLink
+              className="semiBold font15 pointer relative"
+              style={{ position: "relative" }}
+              onMouseEnter={toggleDropdown}
+              onMouseLeave={toggleDropdown}
+            >
+
+              <span
                 className="pointer"
-                style={{ padding: "10px 15px" }}
-                to="#services"
-                onClick={() => {
-                  setTimeout(() => {
-                    const section = document.getElementById("services");
-                    if (section) {
-                      section.scrollIntoView({ behavior: "smooth" });
-                    }
-                  }, 0);
-                }}
+                style={{ padding: "10px 15px", display: "inline-block" }}
               >
-        Services ▼
-        </RouterLink>
-      </span>
-     
-      {isDropdownOpen && (
-        <ul
-          className="dropdown-menu"
-          style={{
-            position: "absolute",
-            top: "100%",
-            left: 0,
-            background: "#fff",
-            border: "1px solid #ccc",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-            zIndex: 1000,
-            listStyle: "none",
-            padding: "10px 0",
-            minWidth: "200px"
-          }}
-        >
-          <li
-            className="dropdown-item"
-            style={{ padding: "10px 20px", cursor: "pointer" }}
-          >
-           <RouterLink
-                className="pointer"
-                style={{ padding: "10px 15px" }}
-                to="/landlords"
-              >
-                Guaranteed Rent
-              </RouterLink>
-          </li>
-          <li
-            className="dropdown-item"
-            style={{ padding: "10px 20px", cursor: "pointer" }}
-          >
-           <RouterLink
-                className="pointer"
-                style={{ padding: "10px 15px" }}
-                to="/joinery"
-              >
-                Joinery Services
-              </RouterLink>
-          </li>
-        
-        </ul>
-      )}
-    </li>
-    <li className="semiBold font15 pointer">
+                <RouterLink
+                  className="pointer"
+                  style={{ padding: "10px 15px" }}
+                  to="#services"
+                  onClick={() => {
+                    setTimeout(() => {
+                      const section = document.getElementById("services");
+                      if (section) {
+                        section.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }, 0);
+                  }}
+                >
+                  Services ▼
+                </RouterLink>
+              </span>
+
+              {isDropdownOpen && (
+                <ul
+                  className="dropdown-menu"
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    background: "#fff",
+                    border: "1px solid #ccc",
+                    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+                    zIndex: 1000,
+                    listStyle: "none",
+                    padding: "10px 0",
+                    minWidth: "200px"
+                  }}
+                >
+                  <li
+                    className="dropdown-item"
+                    style={{ padding: "10px 20px", cursor: "pointer" }}
+                  >
+                    <RouterLink
+                      className="pointer"
+                      style={{ padding: "10px 15px" }}
+                      to="/clearance"
+                    >
+                      Clearance
+                    </RouterLink>
+                  </li>
+                  <li
+                    className="dropdown-item"
+                    style={{ padding: "10px 20px", cursor: "pointer" }}
+                  >
+                    <RouterLink
+                      className="pointer"
+                      style={{ padding: "10px 15px" }}
+                      to="/landlords"
+                    >
+                      Guaranteed Rent
+                    </RouterLink>
+                  </li>
+                  <li
+                    className="dropdown-item"
+                    style={{ padding: "10px 20px", cursor: "pointer" }}
+                  >
+                    <RouterLink
+                      className="pointer"
+                      style={{ padding: "10px 15px" }}
+                      to="/joinery"
+                    >
+                      Joinery Services
+                    </RouterLink>
+                  </li>
+
+                </ul>
+              )}
+            </li>
+            <li className="semiBold font15 pointer">
               <RouterLink
                 className="pointer"
                 style={{ padding: "10px 15px" }}
@@ -209,10 +221,10 @@ export default function TopNavbar() {
                 📧 hello@bristolpropertymaintenance.co.uk
               </a>
               <br />
-              <a href="tel:01172990185" 
-               onClick={handleCallClick}
-              style={{ padding: "10px 30px 10px 0" }}
-             
+              <a href="tel:01172990185"
+                onClick={handleCallClick}
+                style={{ padding: "10px 30px 10px 0" }}
+
 
               >
                 Call today 📞 0117 299 0185
@@ -243,7 +255,7 @@ const ContactInfoSmallScreen = styled.div`
     position: fixed;
     width: 100%;
     display: block;
-    z-index: 999;
+    z-index: 100;
     font-size:14px;
       text-align: center;
   }
@@ -254,7 +266,7 @@ const Wrapper = styled.nav`
   position: fixed;
   top: 0px;
   left: 0;
-  z-index: 999;
+  z-index: 100;
   transition: height 0.3s ease-in-out, top 0.3s ease-in-out;
 
   @media (max-width: 760px) {
@@ -263,7 +275,7 @@ const Wrapper = styled.nav`
     position: fixed;
     top: 80px;
     left: 0;
-    z-index: 999;
+    z-index: 100;
     transition: height 0.3s ease-in-out, top 0.3s ease-in-out;
   }
 `;
