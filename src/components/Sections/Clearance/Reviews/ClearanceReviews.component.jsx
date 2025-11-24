@@ -25,7 +25,7 @@ const reviews = [
         author: 'Ann Dickenson',
         review_site: 'Google',
         date: new Date("2025-07-25"),
-        rating: 3,
+        rating: 5,
         url: 'https://uk.trustpilot.com/reviews/6883339c1a077d8a853f34ca'
     },
     {
@@ -41,7 +41,7 @@ const reviews = [
         author: 'Deborah Muthike',
         review_site: 'TrustPilot',
         date: new Date("2025-06-05"),
-        rating: 1,
+        rating: 5,
         url: 'https://uk.trustpilot.com/reviews/68417ed7c2498b57dc992b00'
     },
     {

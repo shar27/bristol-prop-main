@@ -16,6 +16,7 @@ import {
     ClearanceSubtitle,
     ButtonWrapper
 } from './ClearanceServices.styles';
+import { Link as RouterLink } from "react-router-dom";
 
 
 const clearance_services = [
@@ -99,7 +100,9 @@ const ClearanceServices = () => {
                 </ClearanceHeadingContainer>
                 <ClearanceServiceList clearanceServices={clearance_services} />
                 <ButtonWrapper>
+                     <RouterLink to='get-quote' >
                     <Button buttonType={BUTTON_TYPE_CLASSES.feature}>View Detailed Pricing</Button>
+                    </RouterLink>
                 </ButtonWrapper>
             </ClearanceContainer>
         </>

@@ -172,15 +172,11 @@ const handlePaymentSuccess = async (paymentResult) => {
                   <PriceValue className="font15">£{pricing.extrasTotal.toFixed(2)}</PriceValue>
                 </PriceRow>
               )}
-              <PriceRow>
-                <PriceLabel className="font15">VAT (20%):</PriceLabel>
-                <PriceValue className="font15">£{pricing.vat.toFixed(2)}</PriceValue>
-              </PriceRow>
               <Divider />
               <PriceRow>
                 <TotalLabel className="font18 extraBold">Total:</TotalLabel>
                 <TotalValue className="font18 extraBold">
-                  £{pricing.totalWithVat.toFixed(2)}
+                  £{pricing.totalPrice.toFixed(2)}
                 </TotalValue>
               </PriceRow>
             </PriceBreakdown>
@@ -233,10 +229,10 @@ const handlePaymentSuccess = async (paymentResult) => {
         <PaymentWrapper>
           <Title className="font30 extraBold">Complete Your Payment</Title>
           <Subtitle className="font15">
-            Total Amount: £{pricing.totalWithVat.toFixed(2)}
+            Total Amount: £{pricing.totalPrice.toFixed(2)}
           </Subtitle>
           <SquarePayment
-            amount={pricing.totalWithVat}
+            amount={pricing.totalPrice}
             onPaymentSuccess={handlePaymentSuccess}
             onPaymentCancel={() => setShowPayment(false)}
             isProcessing={isProcessing}

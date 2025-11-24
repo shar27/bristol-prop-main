@@ -9,24 +9,13 @@ import Commercial from '../src/screens/Commercial'
 import JoineryServices from "./screens/JoineryPage";
 import FinancePage from "./screens/FinancePage";
 import ThankYou from "./screens/ThankYou";
-
 import Clearance from './screens/Clearance/Clearance.component'
 import PileOfRubbish from "./screens/Clearance/PileOfRubbish.component";
-import Landing from "./screens/Landing.jsx";
-import Landlords from './screens/Landlords.jsx';
 import DynamicPage from "./components/DynamicPage.jsx";
-import Commercial from '../src/screens/Commercial.jsx'
-import ThankYou from "./screens/ThankYou.jsx";
-import JoineryServices from "./screens/JoineryPage.jsx";
-import FinancePage from "./screens/FinancePage.jsx";
 import GetQuotePage from "./screens/GetQuotePage.jsx";  // NEW
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 
-import DynamicPage from "./components/DynamicPage";
-
-import "slick-carousel/slick/slick-theme.css";
-import "slick-carousel/slick/slick.css";
 
 export default function App() {
   return (
@@ -42,10 +31,8 @@ export default function App() {
           <Route index element={<Landing />} />
           <Route path="landlords" element={<Landlords />} />
           <Route path="commercial" element={<Commercial />} />
-          <Route path="clearance" >
-            <Route index element={<Clearance />}/>
-            <Route path="pile-of-rubbish" element={<PileOfRubbish />}/>
-          </Route>
+          <Route path="clearance" element={<Clearance />} />
+          <Route path="clearance/get-quote" element={<GetQuotePage />} />
           <Route path="joinery" element={<JoineryServices />} />
           <Route path="thankyou" element={<ThankYou />} />
           <Route path=":slug" element={<DynamicPage />} />
@@ -57,7 +44,6 @@ export default function App() {
           <Route path="/joinery" element={<JoineryServices/>}/>
           <Route path="/thankyou" element={<ThankYou/>}/>
           <Route path="/zero-percent-finance" element={<FinancePage/>}/>
-          <Route path="/get-quote" element={<GetQuotePage/>}/> {/* NEW ROUTE */}
           <Route path="/:slug" element={<DynamicPage/>}/>
         </Routes>
       </>

@@ -63,7 +63,7 @@ export default function StepThree({
           
           <UploadButton>
             <SimpleS3Uploader
-              maxFiles={4}
+              maxFiles={50}
               onComplete={handleUploadComplete}
             />
           </UploadButton>

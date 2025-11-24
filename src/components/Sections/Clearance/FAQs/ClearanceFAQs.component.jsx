@@ -1,4 +1,6 @@
 import React from 'react'
+import { Link as RouterLink } from "react-router-dom";
+
 
 import Accordion from '../../../Elements/Accordion/Accordion.component';
 
@@ -15,7 +17,7 @@ import {
 const faqs = [
     {
         question: "How much does house clearance cost?",
-        answer: "Our pricing depends on the size of the property and amount of items. We offer free, no-obligation quotes. Typically, single room clearances start from £150, while full house clearances range from £500-£2000. We provide fixed prices with no hidden costs."
+        answer: "Our pricing depends on the size of the property and amount of items."
     },
     {
         question: "How quickly can you clear my property?",
@@ -47,11 +49,11 @@ const faqs = [
     },
     {
         question: "How do I get a quote?",
-        answer: "Simply call us on 0800 123 4567, fill out our online form, or request a video quote via WhatsApp. For accurate pricing, we usually prefer to visit the property, but we can provide estimates based on photos and descriptions."
+        answer: "Simply call us on 0117 299 0185, fill out our online form, or request a video quote via WhatsApp. For accurate pricing, we usually prefer to visit the property, but we can provide estimates based on photos and descriptions."
     },
     {
         question: "What payment methods do you accept?",
-        answer: "We accept cash, bank transfer, all major credit and debit cards. Payment is usually due on completion of work, though we may require a deposit for large jobs. We provide full invoices for all services."
+        answer: "We accept bank transfer and all major credit and debit cards. Payment is usually due on completion of work, though we may require a deposit for large jobs. We provide full invoices for all services."
     }
 ];
 

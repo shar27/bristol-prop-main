@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-export function SimpleS3Uploader({ onComplete, maxFiles = 4 }) {
+export function SimpleS3Uploader({ onComplete, maxFiles = 10 }) {
   const [uploading, setUploading] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
 

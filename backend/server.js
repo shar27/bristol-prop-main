@@ -4,7 +4,7 @@ const cors = require('cors');
 const { Client, Environment } = require('square');
 const nodemailer = require('nodemailer');
 const multer = require('multer');
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const { S3Client, PutObjectCommand, CopyObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 require('dotenv').config();
 
 const app = express();
@@ -60,8 +60,53 @@ console.log('Database config:', {
 // File upload configuration
 const upload = multer({ 
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { 
+    fileSize: 5 * 1024 * 1024,
+    files: 50
+  }
 });
+
+/**
+ * Helper function to rename/copy S3 files with postcode
+ */
+async function renameS3FilesWithPostcode(s3Urls, bookingId, postcode) {
+  const newUrls = [];
+  
+  for (let i = 0; i < s3Urls.length; i++) {
+    const oldUrl = s3Urls[i];
+    const oldKey = oldUrl.split('.amazonaws.com/')[1];
+    
+    // Create new key with postcode: bookings/{bookingId}/{postcode}_{index}.jpg
+    const extension = oldKey.split('.').pop();
+    const newKey = `bookings/${bookingId}/${postcode}_${i + 1}.${extension}`;
+    
+    try {
+      // Copy object to new location
+      await s3Client.send(new CopyObjectCommand({
+        Bucket: process.env.AWS_S3_BUCKET,
+        CopySource: `${process.env.AWS_S3_BUCKET}/${oldKey}`,
+        Key: newKey,
+      }));
+      
+      // Delete old temp file
+      await s3Client.send(new DeleteObjectCommand({
+        Bucket: process.env.AWS_S3_BUCKET,
+        Key: oldKey,
+      }));
+      
+      const newUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${newKey}`;
+      newUrls.push(newUrl);
+      
+      console.log(`✅ Renamed: ${oldKey} → ${newKey}`);
+    } catch (error) {
+      console.error(`❌ Error renaming ${oldKey}:`, error);
+      // If rename fails, keep old URL
+      newUrls.push(oldUrl);
+    }
+  }
+  
+  return newUrls;
+}
 
 /**
  * Process Square Payment
@@ -101,7 +146,7 @@ app.post('/api/process-payment', async (req, res) => {
  * Temporary upload endpoint for image preview
  * Uploads directly to S3 and returns URL
  */
-app.post('/api/upload-temp', upload.array('images', 4), async (req, res) => {
+app.post('/api/upload-temp', upload.array('images', 50), async (req, res) => {
   try {
     console.log('📸 Temp upload received:', req.files?.length || 0, 'files');
     
@@ -223,10 +268,16 @@ const s3Urls = parseJson(req.body.s3Urls, []);
     const bookingResult = await client.query(bookingQuery, bookingValues);
     const bookingId = bookingResult.rows[0].id;
 
-    // Store S3 URLs in database if any
+    // Rename S3 files with postcode and store in database
     console.log('S3 URLs to store:', s3Urls.length);
+    let finalS3Urls = [];
+    
     if (s3Urls && s3Urls.length > 0) {
-      for (const s3Url of s3Urls) {
+      // Rename files to include postcode
+      finalS3Urls = await renameS3FilesWithPostcode(s3Urls, bookingId, postcode);
+      
+      // Store renamed URLs in database
+      for (const s3Url of finalS3Urls) {
         const filename = s3Url.split('/').pop();
         const imageQuery = `
           INSERT INTO booking_images (booking_id, filename, mime_type, s3_url)
@@ -240,7 +291,7 @@ const s3Urls = parseJson(req.body.s3Urls, []);
         ]);
         console.log(`✅ DB record created for: ${filename}`);
       }
-      console.log(`Total images stored: ${s3Urls.length}`);
+      console.log(`Total images stored: ${finalS3Urls.length}`);
     } else {
       console.log('No images to store');
     }
@@ -272,6 +323,7 @@ const s3Urls = parseJson(req.body.s3Urls, []);
       collectionWindow,
       description,
       totalPrice: pricing.totalWithVat,
+      imageUrls: finalS3Urls,
     });
 
     res.json({
@@ -347,9 +399,108 @@ async function sendCustomerConfirmationEmail(data) {
 }
 
 /**
+ * Generate .ics calendar file for booking
+ */
+function generateCalendarInvite(data) {
+  const collectionDate = new Date(data.collectionDate);
+  
+  // Set time based on collection window
+  let startHour, endHour;
+  switch(data.collectionWindow) {
+    case 'morning':
+      startHour = 8;
+      endHour = 12;
+      break;
+    case 'afternoon':
+      startHour = 12;
+      endHour = 17;
+      break;
+    case 'evening':
+      startHour = 17;
+      endHour = 20;
+      break;
+    default:
+      startHour = 9;
+      endHour = 17;
+  }
+  
+  const startDate = new Date(collectionDate);
+  startDate.setHours(startHour, 0, 0);
+  
+  const endDate = new Date(collectionDate);
+  endDate.setHours(endHour, 0, 0);
+  
+  // Format dates for iCalendar (YYYYMMDDTHHMMSS)
+  const formatICalDate = (date) => {
+    return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+  };
+  
+  const now = new Date();
+  const dtstamp = formatICalDate(now);
+  const dtstart = formatICalDate(startDate);
+  const dtend = formatICalDate(endDate);
+  
+  // Build description with images
+  let description = `Booking #${data.bookingId}\\n\\n`;
+  description += `Customer: ${data.firstName} ${data.surname}\\n`;
+  description += `Phone: ${data.phone}\\n`;
+  description += `Email: ${data.email}\\n`;
+  description += `Address: ${data.address}, ${data.postcode}\\n`;
+  description += `Description: ${data.description}\\n`;
+  description += `Total: £${data.totalPrice.toFixed(2)}\\n`;
+  
+  if (data.imageUrls && data.imageUrls.length > 0) {
+    description += `\\nImages:\\n`;
+    data.imageUrls.forEach((url, index) => {
+      description += `${index + 1}. ${url}\\n`;
+    });
+  }
+  
+  // Generate .ics file content
+  const icsContent = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Bristol Property Maintenance//Booking System//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:REQUEST',
+    'BEGIN:VEVENT',
+    `UID:booking-${data.bookingId}@bristolpropertymaintenance.co.uk`,
+    `DTSTAMP:${dtstamp}`,
+    `DTSTART:${dtstart}`,
+    `DTEND:${dtend}`,
+    `SUMMARY:House Clearance - ${data.firstName} ${data.surname}`,
+    `LOCATION:${data.address}, ${data.postcode}`,
+    `DESCRIPTION:${description}`,
+    `STATUS:CONFIRMED`,
+    `SEQUENCE:0`,
+    `BEGIN:VALARM`,
+    `TRIGGER:-PT24H`,
+    `ACTION:DISPLAY`,
+    `DESCRIPTION:Reminder: House clearance tomorrow`,
+    `END:VALARM`,
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+  
+  return icsContent;
+}
+
+/**
  * Send admin notification email
  */
 async function sendAdminNotificationEmail(data) {
+  // Build image links HTML
+  let imagesHtml = '';
+  if (data.imageUrls && data.imageUrls.length > 0) {
+    imagesHtml = '<div class="detail-row"><strong>Uploaded Images:</strong></div>';
+    data.imageUrls.forEach((url, index) => {
+      const filename = url.split('/').pop();
+      imagesHtml += `<div class="detail-row" style="margin-left: 20px;">
+        ${index + 1}. <a href="${url}" target="_blank" style="color: #003366;">${filename}</a>
+      </div>`;
+    });
+  }
+
   const emailHtml = `
     <!DOCTYPE html>
     <html>
@@ -360,6 +511,7 @@ async function sendAdminNotificationEmail(data) {
         .header { background-color: #003366; color: white; padding: 20px; }
         .details { background-color: #f9f9f9; padding: 20px; margin: 20px 0; }
         .detail-row { margin: 10px 0; }
+        .calendar-note { background-color: #e8f4f8; padding: 15px; margin: 20px 0; border-left: 4px solid #003366; }
       </style>
     </head>
     <body>
@@ -375,18 +527,33 @@ async function sendAdminNotificationEmail(data) {
           <div class="detail-row"><strong>Collection Date:</strong> ${new Date(data.collectionDate).toLocaleDateString('en-GB')}</div>
           <div class="detail-row"><strong>Collection Window:</strong> ${data.collectionWindow}</div>
           <div class="detail-row"><strong>Description:</strong> ${data.description}</div>
-          <div class="detail-row"><strong>Total Price:</strong> £${data.totalPrice.toFixed(2)}(Calculated from your selected load. Additional items may incur extra charges.)</div>
+          <div class="detail-row"><strong>Total Price:</strong> £${data.totalPrice.toFixed(2)} (Calculated from your selected load. Additional items may incur extra charges.)</div>
+          ${imagesHtml}
+        </div>
+        <div class="calendar-note">
+          <strong>📅 Calendar Invite Attached</strong><br>
+          Open the attached .ics file to add this booking to your calendar (works with Outlook, Google Calendar, Apple Calendar).
         </div>
       </div>
     </body>
     </html>
   `;
 
+  // Generate calendar invite
+  const calendarInvite = generateCalendarInvite(data);
+
   await transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to: process.env.ADMIN_EMAIL,
     subject: `New Booking #${data.bookingId} - ${data.firstName} ${data.surname}`,
     html: emailHtml,
+    attachments: [
+      {
+        filename: `booking-${data.bookingId}.ics`,
+        content: calendarInvite,
+        contentType: 'text/calendar; charset=utf-8; method=REQUEST'
+      }
+    ]
   });
 }
 

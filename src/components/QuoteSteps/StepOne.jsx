@@ -8,7 +8,7 @@ export default function StepOne({ formData, handleChange, handleNext }) {
   title: "Quarter Van",
   cubicMetres: "¼ Van Load",
   description: "Equivalent to 4 washing machines or ~15 bags.",
-  price: "£130",
+  price: "£150",
   items: ["4 washing machines", "15 dustbin bags, or", "4 domestic wheelie bins"],
   furniture: ["sofa", "chair", "tv"]
 },{
@@ -16,7 +16,7 @@ export default function StepOne({ formData, handleChange, handleNext }) {
   title: "Half Van",
   cubicMetres: "½ Van Load",
   description: "Equivalent to 1 medium skip or ~25 bags.",
-  price: "£175",
+  price: "£200",
   items: ["1 medium skip", "10 washing machines", "25 dustbin bags, or", "10 domestic wheelie bins"],
   furniture: ["sofa", "chair", "tv", "table", "cabinet"]
 },
@@ -25,7 +25,7 @@ export default function StepOne({ formData, handleChange, handleNext }) {
   title: "Three-Quarter Van",
   cubicMetres: "¾ Van Load",
   description: "Equivalent to 1 large skip or ~40+ bags.",
-  price: "£280",
+  price: "£300",
   items: ["1 large skip", "20+ washing machines", "40+ dustbin bags, or", "20+ domestic wheelie bins"],
   furniture: ["sofa", "chair", "tv", "table", "cabinet", "bed", "wardrobe", "desk"]
 },
@@ -34,7 +34,7 @@ export default function StepOne({ formData, handleChange, handleNext }) {
   title: "Full Van",
   cubicMetres: "Full Van Load",
   description: "Equivalent to 2 builders skips or ~75 bags.",
-  price: "£380",
+  price: "£400",
   items: ["2 builders skips", "30 washing machines", "75 dustbin bags,or", "30 domestic wheelie bins"],
   furniture: ["sofa", "armchair", "table", "cabinet", "wardrobe", "shelving unit", "chair", "blue chair", "folding chairs", "stool", "tv", "pushchair", "heater", "chest", "small red table"]
 },
@@ -43,9 +43,18 @@ export default function StepOne({ formData, handleChange, handleNext }) {
   title: "Van + Extra Load",
   cubicMetres: "Full Van + Extra",
   description: "Equivalent to 2 large skips or 100+ bags.",
-  price: "£560",
+  price: "£600",
   items: ["2 large skips", "40 washing machines", "100 dustbin bags,or", "40 domestic wheelie bins"],
   furniture: ["sofa", "armchair", "table", "side table", "cabinet", "wardrobe", "shelving unit", "chest", "chair", "green chair", "folding chairs", "blue chair", "stool", "tv", "lamp", "heater", "pushchair", "small red table"]
+},
+     {
+  id: "test_price",
+  title: "TEST - £1 Payment",
+  cubicMetres: "Test Option",
+  description: "For testing payment system only.",
+  price: "£1",
+  items: ["Test payment option"],
+  furniture: ["chair"]
 },
   ];
 
@@ -66,8 +75,8 @@ export default function StepOne({ formData, handleChange, handleNext }) {
         <VisualScene>
           <SceneHeader>
             <SceneTitle className="font24 extraBold">{selectedSize.cubicMetres} Cubic Metres</SceneTitle>
-            <PriceTag className="font20 semiBold">{selectedSize.price} + VAT</PriceTag>
-            <LabourInfo className="font14">including {selectedSize.id === 'small' ? '10' : selectedSize.id === 'medium' ? '15' : '30'} mins labour allowance</LabourInfo>
+            <PriceTag className="font20 semiBold">{selectedSize.price}</PriceTag>
+            <LabourInfo className="font14">{selectedSize.id === 'test_price' ? 'Test payment only' : `including ${selectedSize.id === 'small' ? '10' : selectedSize.id === 'medium' ? '15' : '30'} mins labour allowance`}</LabourInfo>
           </SceneHeader>
           
           <FurnitureScene>
@@ -166,7 +175,7 @@ export default function StepOne({ formData, handleChange, handleNext }) {
             </SizeIcon>
             <SizeTitle className="font20 extraBold">{size.title}</SizeTitle>
             <SizeDescription className="font14">{size.description}</SizeDescription>
-            <SizePrice className="font18 semiBold">{size.price} + VAT</SizePrice>
+            <SizePrice className="font18 semiBold">{size.price}</SizePrice>
             <RadioCircle selected={formData.size === size.id}>
               {formData.size === size.id && <RadioDot />}
             </RadioCircle>
