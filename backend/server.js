@@ -17,6 +17,17 @@ const s3Client = new S3Client({
 
 // Middleware
 app.use(cors());
+
+app.use(cors({
+  origin: [
+    'http://localhost:5001',
+    'http://localhost:3000',
+    'http://localhost:5000',
+    'https://bristolpropertymaintenance.co.uk',
+  ],
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Square Client Configuration
@@ -27,8 +38,6 @@ const squareClient = new Client({
     : Environment.Sandbox,
 });
 
-console.log('Square Environment:', process.env.SQUARE_ENVIRONMENT);
-console.log('Using Square URL:', process.env.SQUARE_ENVIRONMENT === 'production' ? 'Production' : 'Sandbox');
 
 // Email Configuration (using nodemailer)
 const transporter = nodemailer.createTransport({
@@ -50,12 +59,7 @@ const pool = new Pool({
   }
 });
 
-console.log('Database config:', {
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT
-});
+
 
 // File upload configuration
 const upload = multer({ 
@@ -97,7 +101,6 @@ async function renameS3FilesWithPostcode(s3Urls, bookingId, postcode) {
       const newUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${newKey}`;
       newUrls.push(newUrl);
       
-      console.log(`✅ Renamed: ${oldKey} → ${newKey}`);
     } catch (error) {
       console.error(`❌ Error renaming ${oldKey}:`, error);
       // If rename fails, keep old URL
@@ -148,7 +151,6 @@ app.post('/api/process-payment', async (req, res) => {
  */
 app.post('/api/upload-temp', upload.array('images', 50), async (req, res) => {
   try {
-    console.log('📸 Temp upload received:', req.files?.length || 0, 'files');
     
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ error: 'No files uploaded' });
@@ -156,7 +158,7 @@ app.post('/api/upload-temp', upload.array('images', 50), async (req, res) => {
 
     const uploadPromises = req.files.map(async (file) => {
       const key = `temp/${Date.now()}-${file.originalname}`;
-      console.log(`Uploading to S3: ${key}`);
+      
       
       const uploadParams = {
         Bucket: process.env.AWS_S3_BUCKET,
@@ -167,7 +169,7 @@ app.post('/api/upload-temp', upload.array('images', 50), async (req, res) => {
 
       await s3Client.send(new PutObjectCommand(uploadParams));
       const s3Url = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
-      console.log(`✅ Uploaded: ${s3Url}`);
+     
       
       return s3Url;
     });
@@ -188,8 +190,7 @@ app.post('/api/upload-temp', upload.array('images', 50), async (req, res) => {
  * Create Booking
  */
 app.post('/api/bookings', express.json(), async (req, res) => {
-  console.log('📥 Booking request received');
-  console.log('Body keys:', Object.keys(req.body));
+  
   
   const client = await pool.connect();
   
@@ -230,8 +231,6 @@ const paymentResult = parseJson(req.body.paymentResult, {});
 const s3Urls = parseJson(req.body.s3Urls, []);
 
 
-    console.log('Payment ID:', paymentResult.payment?.id);
-    console.log('S3 URLs received:', s3Urls.length);
 
     // Insert booking into database
     const bookingQuery = `
@@ -269,7 +268,6 @@ const s3Urls = parseJson(req.body.s3Urls, []);
     const bookingId = bookingResult.rows[0].id;
 
     // Rename S3 files with postcode and store in database
-    console.log('S3 URLs to store:', s3Urls.length);
     let finalS3Urls = [];
     
     if (s3Urls && s3Urls.length > 0) {
@@ -291,7 +289,6 @@ const s3Urls = parseJson(req.body.s3Urls, []);
         ]);
         console.log(`✅ DB record created for: ${filename}`);
       }
-      console.log(`Total images stored: ${finalS3Urls.length}`);
     } else {
       console.log('No images to store');
     }

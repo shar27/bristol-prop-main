@@ -9,7 +9,6 @@ export default function StepThree({
   handleBack,
 }) {
   const handleUploadComplete = (urls) => {
-    console.log('✅ Uploaded URLs:', urls);
     handleChange("s3Urls", [...(formData.s3Urls || []), ...urls]);
   };
 

@@ -51,8 +51,7 @@ const QuoteModal = ({ handleModalClose, modalOpen, formRef, emailDisplayMessage,
 
         sendEmail();
 
-        console.log(formData);
-        console.log(uploadedFiles);
+    
 
         setFormData({
             name: "",

@@ -3,17 +3,7 @@ import styled from "styled-components";
 import SquarePayment from "../../Payment/SquarePayment";
 
 export default function StepFour({ formData, handleChange, handleBack, pricing }) {
- console.log('🔍 StepFour rendered with formData:', {
-  hasImages: !!formData.images,
-  imagesLength: formData.images?.length || 0,
-  hasImageFiles: !!formData.imageFiles,
-  imageFilesLength: formData.imageFiles?.length || 0,
-  imageFilesType: typeof formData.imageFiles,
-  // ADD THESE:
-  hasS3Urls: !!formData.s3Urls,
-  s3UrlsLength: formData.s3Urls?.length || 0,
-  s3Urls: formData.s3Urls,
-});
+
 
   const [showPayment, setShowPayment] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -44,7 +34,7 @@ const handlePaymentSuccess = async (paymentResult) => {
     });
 
     if (response.ok) {
-      window.location.href = '/thankyou';
+      window.location.href = '/thankyou?booking=true';
     } else {
       alert('Error processing booking.');
     }

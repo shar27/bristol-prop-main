@@ -67,7 +67,6 @@ export default function QuoteForm() {
       large: { base: 280, labour: 30 },
       xlarge: { base: 380, labour: 45 },
       xxlarge: { base: 560, labour: 60 },
-      test_price: { base: 1, labour: 0 },
     };
 
     const extrasPricing = {

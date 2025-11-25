@@ -35,7 +35,6 @@ const handleFileSelect = async (e) => {
     }
 
     const data = await response.json();
-    console.log('✅ Upload response:', data);
     
     if (data.s3Urls && data.s3Urls.length > 0) {
       onComplete(data.s3Urls);
@@ -71,7 +70,6 @@ const handleFileSelect = async (e) => {
       }
 
       const data = await response.json();
-      console.log('✅ Upload response:', data);
       
       if (data.s3Urls && data.s3Urls.length > 0) {
         onComplete(data.s3Urls);

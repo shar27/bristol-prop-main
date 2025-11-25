@@ -32,8 +32,6 @@ export default function SquarePayment({ amount, onPaymentSuccess, onPaymentCance
         const appId = process.env.REACT_APP_SQUARE_APPLICATION_ID;
         const locationId = process.env.REACT_APP_SQUARE_LOCATION_ID;
 
-        console.log('Square App ID:', appId);
-        console.log('Square Location ID:', locationId);
 
         if (!appId || !locationId) {
           throw new Error('Square credentials missing. Check .env file in project root.');

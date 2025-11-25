@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import ThankYouHeader from '../../src/components/Sections/ThankyouPage/ThankYouHeader';
 import TopNavbar from '../components/Nav/TopNavbar';
 
 function ThankYou() {
   const [showRedirectMsg, setShowRedirectMsg] = useState(false);
+  const location = useLocation();
+  
+  // Check if this is from booking flow
+  const isBooking = location.state?.fromBooking || location.search.includes('booking=true');
 
   useEffect(() => {
     // Fire the Google Ads conversion event
@@ -20,16 +25,27 @@ function ThankYou() {
 
     const timer = setTimeout(() => {
       window.location.href = '/';
-    }, 7000); // Redirect after 5 seconds
+    }, 7000);
 
-    // Cleanup on unmount
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <div>
       <TopNavbar />
-      <ThankYouHeader />
+      {isBooking ? (
+        <div style={{ textAlign: 'center', padding: '100px 20px' }}>
+          <h1>Thank You for Your Booking!</h1>
+          <p style={{ fontSize: '18px', marginTop: '20px' }}>
+            Your house clearance booking has been confirmed. We'll send you a confirmation email shortly.
+          </p>
+          <p style={{ fontSize: '16px', marginTop: '20px', color: '#666' }}>
+            We'll contact you 24 hours before your scheduled collection.
+          </p>
+        </div>
+      ) : (
+        <ThankYouHeader />
+      )}
       {showRedirectMsg && (
         <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '18px' }}>
           You are being redirected to the homepage...
