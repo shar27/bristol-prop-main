@@ -47,6 +47,15 @@ export default function StepOne({ formData, handleChange, handleNext }) {
   items: ["2 large skips", "40 washing machines", "100 dustbin bags,or", "40 domestic wheelie bins"],
   furniture: ["sofa", "armchair", "table", "side table", "cabinet", "wardrobe", "shelving unit", "chest", "chair", "green chair", "folding chairs", "blue chair", "stool", "tv", "lamp", "heater", "pushchair", "small red table"]
 },
+    {
+  id: "test",
+  title: "Van + Extra Load",
+  cubicMetres: "Full Van + Extra",
+  description: "Equivalent to 2 large skips or 100+ bags.",
+  price: "£1",
+  items: ["2 large skips", "40 washing machines", "100 dustbin bags,or", "40 domestic wheelie bins"],
+  furniture: ["sofa", "armchair", "table", "side table", "cabinet", "wardrobe", "shelving unit", "chest", "chair", "green chair", "folding chairs", "blue chair", "stool", "tv", "lamp", "heater", "pushchair", "small red table"]
+},
   ];
 
   const handleSizeSelect = (sizeId) => {
