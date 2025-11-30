@@ -62,11 +62,12 @@ export default function QuoteForm() {
 
   const calculatePricing = (size, extras = []) => {
     const sizesPricing = {
-      small: { base: 130, labour: 10 },
-      medium: { base: 175, labour: 15 },
-      large: { base: 280, labour: 30 },
-      xlarge: { base: 380, labour: 45 },
-      xxlarge: { base: 560, labour: 60 },
+      test: {base: 1, labour: 0},
+      small: { base: 150, labour: 10 },
+      medium: { base: 200, labour: 15 },
+      large: { base: 300, labour: 30 },
+      xlarge: { base: 400, labour: 45 },
+      xxlarge: { base: 600, labour: 60 },
     };
 
     const extrasPricing = {
