@@ -25,7 +25,7 @@ const handleFileSelect = async (e) => {
     });
 
     const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-    const response = await fetch(`${apiUrl}/upload-temp`, {
+    const response = await fetch(`${apiUrl}/api/upload-temp`, {
       method: 'POST',
       body: formData,
     });
@@ -60,7 +60,7 @@ const handleFileSelect = async (e) => {
       });
 
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-      const response = await fetch(`${apiUrl}/upload-temp`, {
+      const response = await fetch(`${apiUrl}api/upload-temp`, {
         method: 'POST',
         body: formData,
       });
