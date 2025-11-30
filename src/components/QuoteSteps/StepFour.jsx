@@ -20,7 +20,7 @@ const handlePaymentSuccess = async (paymentResult) => {
   try {
     const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
     
-    const response = await fetch(`${apiUrl}api/bookings`, {
+    const response = await fetch(`${apiUrl}/api/bookings`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
