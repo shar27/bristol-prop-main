@@ -20,18 +20,16 @@ app.use(cors());
 
 app.use(cors({
   origin: [
+    'http://localhost:5001',
     'http://localhost:3000',
     'http://localhost:5000',
-    'http://localhost:5001',
+    'https://bristolpropertymaintenance.co.uk',
     'https://bristolpropertymaintenance.co.uk',
     'https://www.bristolpropertymaintenance.co.uk',
     'https://api.bristolpropertymaintenance.co.uk'
   ],
-  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
-
 
 app.use(express.json());
 
@@ -588,7 +586,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
 
