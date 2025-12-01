@@ -8,7 +8,7 @@ const { S3Client, PutObjectCommand, CopyObjectCommand, DeleteObjectCommand } = r
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 
 // AWS S3 Configuration
 const s3Client = new S3Client({
@@ -22,7 +22,7 @@ app.use(cors({
   origin: [
     'http://localhost:5001',
     'http://localhost:3000',
-    'http://localhost:5000',
+    'http://localhost:8080',
     'https://bristolpropertymaintenance.co.uk',
     'https://bristolpropertymaintenance.co.uk',
     'https://www.bristolpropertymaintenance.co.uk',
@@ -193,7 +193,8 @@ app.post('/api/upload-temp', upload.array('images', 50), async (req, res) => {
  * Create Booking
  */
 app.post('/api/bookings', express.json(), async (req, res) => {
-  
+  console.log("Booking request received:", JSON.stringify(req.body, null, 2));
+
   
   const client = await pool.connect();
   

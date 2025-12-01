@@ -18,7 +18,7 @@ export default function StepFour({ formData, handleChange, handleBack, pricing }
 const handlePaymentSuccess = async (paymentResult) => {
   setIsProcessing(true);
   try {
-    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
     
     const response = await fetch(`${apiUrl}/api/bookings`, {
       method: 'POST',
