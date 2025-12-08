@@ -8,7 +8,7 @@ const { S3Client, PutObjectCommand, CopyObjectCommand, DeleteObjectCommand } = r
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = 8080;
 
 // AWS S3 Configuration
 const s3Client = new S3Client({
@@ -16,22 +16,25 @@ const s3Client = new S3Client({
 });
 
 // Middleware
-app.use(cors());
-
-app.use(cors({
+// Middleware - CORS must be configured ONCE and handle errors properly
+const corsOptions = {
   origin: [
     'http://localhost:5001',
+    'http://localhost:5000',
     'http://localhost:3000',
     'http://localhost:8080',
-    'https://bristolpropertymaintenance.co.uk',
+     'http://localhost:8081',
     'https://bristolpropertymaintenance.co.uk',
     'https://www.bristolpropertymaintenance.co.uk',
-    'https://api.bristolpropertymaintenance.co.uk'
+    'https://www.bristol-prop-main-production.up.railway.app',
   ],
-  credentials: true
-}));
+  credentials: true,
+  optionsSuccessStatus: 200
+};
 
+app.use(cors(corsOptions));
 app.use(express.json());
+
 
 // Square Client Configuration
 const squareClient = new Client({
@@ -54,13 +57,43 @@ const transporter = nodemailer.createTransport({
 });
 
 // Database connection (PostgreSQL with SSL for AWS RDS)
+// Database connection (PostgreSQL - Railway)
+console.log(`[DB] Connecting to Railway PostgreSQL...`);
+console.log(`[DB] Environment: ${process.env.NODE_ENV || 'development'}`);
+
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL must be defined.");
+}
+// Railway internal DB does not use SSL
+// Local proxy requires SSL (self-signed)
+const isProduction = process.env.NODE_ENV === 'production';
+
+console.log("[DB] Using URL:", process.env.DATABASE_URL);
+console.log("[DB] Is Production:", isProduction);
+
 const { Pool } = require('pg');
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || `postgresql://${process.env.DB_USER}:${encodeURIComponent(process.env.DB_PASSWORD)}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?sslmode=require`,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  connectionString: process.env.DATABASE_URL,
+  ssl: isProduction 
+    ? false 
+    : { rejectUnauthorized: false },  // Accept self-signed certs for local dev
+  connectionTimeoutMillis: 10000,
+  idleTimeoutMillis: 30000,
 });
+
+console.log("[DB] SSL Config:", isProduction ? 'disabled' : '{ rejectUnauthorized: false }');
+// Verify real database connection
+(async () => {
+  try {
+    const result = await pool.query("SELECT NOW() AS now");
+    console.log("✅ Railway PostgreSQL connected");
+    console.log("🕒 DB Time:", result.rows[0].now);
+  } catch (err) {
+    console.error("❌ Railway PostgreSQL connection failed:", err);
+  }
+})();
+
 
 
 
@@ -117,6 +150,8 @@ async function renameS3FilesWithPostcode(s3Urls, bookingId, postcode) {
 /**
  * Process Square Payment
  */
+
+
 app.post('/api/process-payment', async (req, res) => {
   try {
     const { sourceId, amount } = req.body;
@@ -263,8 +298,8 @@ const s3Urls = parseJson(req.body.s3Urls, []);
       pricing.basePrice,
       pricing.extrasTotal,
       pricing.vat,
-      pricing.totalWithVat,
-      paymentResult.payment.id,
+      pricing.totalPrice || pricing.totalWithVat,
+      paymentResult?.payment?.id || paymentResult?.id,
       'completed',
     ];
 
@@ -581,9 +616,21 @@ app.get('/api/bookings/:id', async (req, res) => {
   }
 });
 
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+// Global error handler with CORS headers
+app.use((err, req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Credentials', 'true');
+  console.error('Error:', err);
+  res.status(500).json({ 
+    success: false, 
+    error: err.message || 'Internal server error' 
+  });
 });
 
 // Start server
