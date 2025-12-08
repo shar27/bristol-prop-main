@@ -544,6 +544,7 @@ async function sendAdminNotificationEmail(data) {
     from: process.env.EMAIL_FROM,
     replyTo: process.env.EMAIL_REPLY_TO,
     to: process.env.ADMIN_EMAIL,
+    cc: process.env.ADMIN_EMAIL,
     subject: `New Booking #${data.bookingId} - ${data.firstName} ${data.surname}`,
     html: emailHtml,
     attachments: [
