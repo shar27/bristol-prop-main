@@ -2,9 +2,9 @@
 const express = require('express');
 const cors = require('cors');
 const { Client, Environment } = require('square');
-const nodemailer = require('nodemailer');
 const multer = require('multer');
 const { S3Client, PutObjectCommand, CopyObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
+const { Resend } = require('resend');
 require('dotenv').config();
 
 const app = express();
@@ -15,7 +15,6 @@ const s3Client = new S3Client({
   region: process.env.AWS_REGION || 'us-east-1'
 });
 
-// Middleware
 // Middleware - CORS must be configured ONCE and handle errors properly
 const corsOptions = {
   origin: [
@@ -23,7 +22,7 @@ const corsOptions = {
     'http://localhost:5000',
     'http://localhost:3000',
     'http://localhost:8080',
-     'http://localhost:8081',
+    'http://localhost:8081',
     'https://bristolpropertymaintenance.co.uk',
     'https://www.bristolpropertymaintenance.co.uk',
     'https://www.bristol-prop-main-production.up.railway.app',
@@ -35,7 +34,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-
 // Square Client Configuration
 const squareClient = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
@@ -44,19 +42,9 @@ const squareClient = new Client({
     : Environment.Sandbox,
 });
 
+// Resend Email Configuration
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Email Configuration (using nodemailer)
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: parseInt(process.env.EMAIL_PORT),
-  secure: process.env.EMAIL_PORT === '465',  // true for 465, false for 587
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
-
-// Database connection (PostgreSQL with SSL for AWS RDS)
 // Database connection (PostgreSQL - Railway)
 console.log(`[DB] Connecting to Railway PostgreSQL...`);
 console.log(`[DB] Environment: ${process.env.NODE_ENV || 'development'}`);
@@ -64,8 +52,7 @@ console.log(`[DB] Environment: ${process.env.NODE_ENV || 'development'}`);
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL must be defined.");
 }
-// Railway internal DB does not use SSL
-// Local proxy requires SSL (self-signed)
+
 const isProduction = process.env.NODE_ENV === 'production';
 
 console.log("[DB] Using URL:", process.env.DATABASE_URL);
@@ -77,12 +64,13 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: isProduction 
     ? false 
-    : { rejectUnauthorized: false },  // Accept self-signed certs for local dev
+    : { rejectUnauthorized: false },
   connectionTimeoutMillis: 10000,
   idleTimeoutMillis: 30000,
 });
 
 console.log("[DB] SSL Config:", isProduction ? 'disabled' : '{ rejectUnauthorized: false }');
+
 // Verify real database connection
 (async () => {
   try {
@@ -93,9 +81,6 @@ console.log("[DB] SSL Config:", isProduction ? 'disabled' : '{ rejectUnauthorize
     console.error("❌ Railway PostgreSQL connection failed:", err);
   }
 })();
-
-
-
 
 // File upload configuration
 const upload = multer({ 
@@ -116,19 +101,16 @@ async function renameS3FilesWithPostcode(s3Urls, bookingId, postcode) {
     const oldUrl = s3Urls[i];
     const oldKey = oldUrl.split('.amazonaws.com/')[1];
     
-    // Create new key with postcode: bookings/{bookingId}/{postcode}_{index}.jpg
     const extension = oldKey.split('.').pop();
     const newKey = `bookings/${bookingId}/${postcode}_${i + 1}.${extension}`;
     
     try {
-      // Copy object to new location
       await s3Client.send(new CopyObjectCommand({
         Bucket: process.env.AWS_S3_BUCKET,
         CopySource: `${process.env.AWS_S3_BUCKET}/${oldKey}`,
         Key: newKey,
       }));
       
-      // Delete old temp file
       await s3Client.send(new DeleteObjectCommand({
         Bucket: process.env.AWS_S3_BUCKET,
         Key: oldKey,
@@ -139,7 +121,6 @@ async function renameS3FilesWithPostcode(s3Urls, bookingId, postcode) {
       
     } catch (error) {
       console.error(`❌ Error renaming ${oldKey}:`, error);
-      // If rename fails, keep old URL
       newUrls.push(oldUrl);
     }
   }
@@ -150,8 +131,6 @@ async function renameS3FilesWithPostcode(s3Urls, bookingId, postcode) {
 /**
  * Process Square Payment
  */
-
-
 app.post('/api/process-payment', async (req, res) => {
   try {
     const { sourceId, amount } = req.body;
@@ -165,7 +144,6 @@ app.post('/api/process-payment', async (req, res) => {
       idempotencyKey: require('crypto').randomUUID(),
     });
 
-    // Convert BigInt to string for JSON serialization
     const paymentData = JSON.parse(JSON.stringify(payment.result.payment, (key, value) =>
       typeof value === 'bigint' ? value.toString() : value
     ));
@@ -185,18 +163,15 @@ app.post('/api/process-payment', async (req, res) => {
 
 /**
  * Temporary upload endpoint for image preview
- * Uploads directly to S3 and returns URL
  */
 app.post('/api/upload-temp', upload.array('images', 50), async (req, res) => {
   try {
-    
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ error: 'No files uploaded' });
     }
 
     const uploadPromises = req.files.map(async (file) => {
       const key = `temp/${Date.now()}-${file.originalname}`;
-      
       
       const uploadParams = {
         Bucket: process.env.AWS_S3_BUCKET,
@@ -207,7 +182,6 @@ app.post('/api/upload-temp', upload.array('images', 50), async (req, res) => {
 
       await s3Client.send(new PutObjectCommand(uploadParams));
       const s3Url = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
-     
       
       return s3Url;
     });
@@ -230,7 +204,6 @@ app.post('/api/upload-temp', upload.array('images', 50), async (req, res) => {
 app.post('/api/bookings', express.json(), async (req, res) => {
   console.log("Booking request received:", JSON.stringify(req.body, null, 2));
 
-  
   const client = await pool.connect();
   
   try {
@@ -251,27 +224,23 @@ app.post('/api/bookings', express.json(), async (req, res) => {
       propertyValuation,
     } = req.body;
 
- // Parse JSON fields safely with try-catch
-const parseJson = (value, defaultValue) => {
-  try {
-    if (!value || value === '' || value === 'undefined' || value === 'null') {
-      return defaultValue;
-    }
-    return JSON.parse(value);
-  } catch (e) {
-    console.error('JSON parse error for value:', value, e);
-    return defaultValue;
-  }
-};
+    const parseJson = (value, defaultValue) => {
+      try {
+        if (!value || value === '' || value === 'undefined' || value === 'null') {
+          return defaultValue;
+        }
+        return JSON.parse(value);
+      } catch (e) {
+        console.error('JSON parse error for value:', value, e);
+        return defaultValue;
+      }
+    };
 
-const extras = parseJson(req.body.extras, []);
-const pricing = parseJson(req.body.pricing, { basePrice: 0, extrasTotal: 0, vat: 0, totalPrice: 0 });
-const paymentResult = parseJson(req.body.paymentResult, {});
-const s3Urls = parseJson(req.body.s3Urls, []);
+    const extras = parseJson(req.body.extras, []);
+    const pricing = parseJson(req.body.pricing, { basePrice: 0, extrasTotal: 0, vat: 0, totalPrice: 0 });
+    const paymentResult = parseJson(req.body.paymentResult, {});
+    const s3Urls = parseJson(req.body.s3Urls, []);
 
-
-
-    // Insert booking into database
     const bookingQuery = `
       INSERT INTO bookings (
         size, first_name, surname, email, phone, address, postcode,
@@ -306,14 +275,11 @@ const s3Urls = parseJson(req.body.s3Urls, []);
     const bookingResult = await client.query(bookingQuery, bookingValues);
     const bookingId = bookingResult.rows[0].id;
 
-    // Rename S3 files with postcode and store in database
     let finalS3Urls = [];
     
     if (s3Urls && s3Urls.length > 0) {
-      // Rename files to include postcode
       finalS3Urls = await renameS3FilesWithPostcode(s3Urls, bookingId, postcode);
       
-      // Store renamed URLs in database
       for (const s3Url of finalS3Urls) {
         const filename = s3Url.split('/').pop();
         const imageQuery = `
@@ -334,8 +300,8 @@ const s3Urls = parseJson(req.body.s3Urls, []);
 
     await client.query('COMMIT');
 
-    // Send confirmation email to customer
-    await sendCustomerConfirmationEmail({
+    // Send emails (don't block response if they fail)
+    sendCustomerConfirmationEmail({
       email,
       firstName,
       bookingId,
@@ -344,10 +310,9 @@ const s3Urls = parseJson(req.body.s3Urls, []);
       address,
       postcode,
       totalPrice: pricing.totalWithVat,
-    });
+    }).catch(err => console.error('Customer email failed:', err));
 
-    // // Send notification email to admin
-    await sendAdminNotificationEmail({
+    sendAdminNotificationEmail({
       bookingId,
       firstName,
       surname,
@@ -360,7 +325,7 @@ const s3Urls = parseJson(req.body.s3Urls, []);
       description,
       totalPrice: pricing.totalWithVat,
       imageUrls: finalS3Urls,
-    });
+    }).catch(err => console.error('Admin email failed:', err));
 
     res.json({
       success: true,
@@ -380,7 +345,7 @@ const s3Urls = parseJson(req.body.s3Urls, []);
 });
 
 /**
- * Send customer confirmation email
+ * Send customer confirmation email via Resend
  */
 async function sendCustomerConfirmationEmail(data) {
   const emailHtml = `
@@ -426,12 +391,15 @@ async function sendCustomerConfirmationEmail(data) {
     </html>
   `;
 
-  await transporter.sendMail({
+  await resend.emails.send({
     from: process.env.EMAIL_FROM,
+    replyTo: process.env.EMAIL_REPLY_TO,
     to: data.email,
     subject: `Booking Confirmation - #${data.bookingId}`,
     html: emailHtml,
   });
+  
+  console.log(`✅ Customer confirmation email sent to ${data.email}`);
 }
 
 /**
@@ -440,7 +408,6 @@ async function sendCustomerConfirmationEmail(data) {
 function generateCalendarInvite(data) {
   const collectionDate = new Date(data.collectionDate);
   
-  // Set time based on collection window
   let startHour, endHour;
   switch(data.collectionWindow) {
     case 'morning':
@@ -466,7 +433,6 @@ function generateCalendarInvite(data) {
   const endDate = new Date(collectionDate);
   endDate.setHours(endHour, 0, 0);
   
-  // Format dates for iCalendar (YYYYMMDDTHHMMSS)
   const formatICalDate = (date) => {
     return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
   };
@@ -476,7 +442,6 @@ function generateCalendarInvite(data) {
   const dtstart = formatICalDate(startDate);
   const dtend = formatICalDate(endDate);
   
-  // Build description with images
   let description = `Booking #${data.bookingId}\\n\\n`;
   description += `Customer: ${data.firstName} ${data.surname}\\n`;
   description += `Phone: ${data.phone}\\n`;
@@ -492,7 +457,6 @@ function generateCalendarInvite(data) {
     });
   }
   
-  // Generate .ics file content
   const icsContent = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -522,10 +486,9 @@ function generateCalendarInvite(data) {
 }
 
 /**
- * Send admin notification email
+ * Send admin notification email via Resend
  */
 async function sendAdminNotificationEmail(data) {
-  // Build image links HTML
   let imagesHtml = '';
   if (data.imageUrls && data.imageUrls.length > 0) {
     imagesHtml = '<div class="detail-row"><strong>Uploaded Images:</strong></div>';
@@ -575,22 +538,23 @@ async function sendAdminNotificationEmail(data) {
     </html>
   `;
 
-  // Generate calendar invite
   const calendarInvite = generateCalendarInvite(data);
 
-  await transporter.sendMail({
+  await resend.emails.send({
     from: process.env.EMAIL_FROM,
+    replyTo: process.env.EMAIL_REPLY_TO,
     to: process.env.ADMIN_EMAIL,
     subject: `New Booking #${data.bookingId} - ${data.firstName} ${data.surname}`,
     html: emailHtml,
     attachments: [
       {
         filename: `booking-${data.bookingId}.ics`,
-        content: calendarInvite,
-        contentType: 'text/calendar; charset=utf-8; method=REQUEST'
+        content: Buffer.from(calendarInvite).toString('base64'),
       }
     ]
   });
+  
+  console.log(`✅ Admin notification email sent to ${process.env.ADMIN_EMAIL}`);
 }
 
 /**
@@ -615,7 +579,6 @@ app.get('/api/bookings/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch booking' });
   }
 });
-
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
