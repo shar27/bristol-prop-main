@@ -394,6 +394,7 @@ async function sendCustomerConfirmationEmail(data) {
   await resend.emails.send({
     from: process.env.EMAIL_FROM,
     replyTo: process.env.EMAIL_REPLY_TO,
+    cc: ['hello@bristolpropertymaintenance.co.uk'],
     to: data.email,
     subject: `Booking Confirmation - #${data.bookingId}`,
     html: emailHtml,
@@ -544,7 +545,7 @@ async function sendAdminNotificationEmail(data) {
     from: process.env.EMAIL_FROM,
     replyTo: process.env.EMAIL_REPLY_TO,
     to: process.env.ADMIN_EMAIL,
-    cc: process.env.ADMIN_EMAIL,
+    cc: ['hello@bristolpropertymaintenance.co.uk'],
     subject: `New Booking #${data.bookingId} - ${data.firstName} ${data.surname}`,
     html: emailHtml,
     attachments: [
