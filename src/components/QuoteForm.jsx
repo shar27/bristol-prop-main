@@ -94,7 +94,7 @@ export default function QuoteForm() {
     }, 0);
 
     const totalPrice = basePrice + extrasTotal;
-    const vat = totalPrice * 0.2;
+    const vat = totalPrice * 0;
     const totalWithVat = totalPrice + vat;
 
     return {
