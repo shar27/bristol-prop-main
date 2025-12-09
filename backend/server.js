@@ -4,7 +4,6 @@ const cors = require('cors');
 const { Client, Environment } = require('square');
 const multer = require('multer');
 const { S3Client, PutObjectCommand, CopyObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
-const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
@@ -40,26 +39,6 @@ const squareClient = new Client({
   environment: process.env.SQUARE_ENVIRONMENT === 'production' 
     ? Environment.Production 
     : Environment.Sandbox,
-});
-
-// Nodemailer Email Configuration
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: parseInt(process.env.EMAIL_PORT),
-  secure: process.env.EMAIL_PORT === '465',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-});
-
-// Verify email connection
-transporter.verify((error, success) => {
-  if (error) {
-    console.error('❌ Email configuration error:', error);
-  } else {
-    console.log('✅ Email server ready');
-  }
 });
 
 // Database connection (PostgreSQL - Railway)
@@ -317,32 +296,7 @@ app.post('/api/bookings', express.json(), async (req, res) => {
 
     await client.query('COMMIT');
 
-    // Send emails (don't block response if they fail)
-    sendCustomerConfirmationEmail({
-      email,
-      firstName,
-      bookingId,
-      collectionDate,
-      collectionWindow,
-      address,
-      postcode,
-      totalPrice: pricing.totalPrice,
-    }).catch(err => console.error('Customer email failed:', err));
-
-    sendAdminNotificationEmail({
-      bookingId,
-      firstName,
-      surname,
-      email,
-      phone,
-      address,
-      postcode,
-      collectionDate,
-      collectionWindow,
-      description,
-      totalPrice: pricing.totalPrice,
-      imageUrls: finalS3Urls,
-    }).catch(err => console.error('Admin email failed:', err));
+    // Emails are now sent from the frontend via EmailJS
 
     res.json({
       success: true,
@@ -360,219 +314,6 @@ app.post('/api/bookings', express.json(), async (req, res) => {
     client.release();
   }
 });
-
-/**
- * Send customer confirmation email via Nodemailer
- */
-async function sendCustomerConfirmationEmail(data) {
-  const emailHtml = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background-color: #003366; color: white; padding: 20px; text-align: center; }
-        .content { padding: 20px; background-color: #f9f9f9; }
-        .booking-details { background-color: white; padding: 15px; margin: 15px 0; border-left: 4px solid #003366; }
-        .footer { text-align: center; padding: 20px; color: #777; font-size: 12px; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <h1>Booking Confirmation</h1>
-        </div>
-        <div class="content">
-          <p>Dear ${data.firstName},</p>
-          <p>Thank you for booking with Bristol Property Maintenance. Your booking has been confirmed!</p>
-          
-          <div class="booking-details">
-            <h3>Booking Details</h3>
-            <p><strong>Booking Reference:</strong> #${data.bookingId}</p>
-            <p><strong>Collection Date:</strong> ${new Date(data.collectionDate).toLocaleDateString('en-GB')}</p>
-            <p><strong>Collection Window:</strong> ${data.collectionWindow}</p>
-            <p><strong>Collection Address:</strong><br>${data.address}<br>${data.postcode}</p>
-            <p><strong>Total Paid:</strong> £${data.totalPrice.toFixed(2)}</p>
-          </div>
-          
-          <p>We will contact you 24 hours before your scheduled collection to confirm the exact time.</p>
-          <p>If you have any questions, please don't hesitate to contact us:</p>
-          <p>📞 0117 299 0185<br>📧 hello@bristolpropertymaintenance.co.uk</p>
-        </div>
-        <div class="footer">
-          <p>Bristol Property Maintenance<br>A trading name of SWIFT UK PROPERTY INVESTMENTS LTD<br>Company number: 15244665</p>
-        </div>
-      </div>
-    </body>
-    </html>
-  `;
-
-  await transporter.sendMail({
-    from: process.env.EMAIL_FROM,
-    to: data.email,
-    cc: process.env.ADMIN_EMAIL,
-    subject: `Booking Confirmation - #${data.bookingId}`,
-    html: emailHtml,
-  });
-  
-  console.log(`✅ Customer confirmation email sent to ${data.email}`);
-}
-
-/**
- * Generate .ics calendar file for booking
- */
-function generateCalendarInvite(data) {
-  const collectionDate = new Date(data.collectionDate);
-  
-  let startHour, endHour;
-  switch(data.collectionWindow) {
-    case 'morning':
-      startHour = 8;
-      endHour = 12;
-      break;
-    case 'afternoon':
-      startHour = 12;
-      endHour = 17;
-      break;
-    case 'evening':
-      startHour = 17;
-      endHour = 20;
-      break;
-    default:
-      startHour = 9;
-      endHour = 17;
-  }
-  
-  const startDate = new Date(collectionDate);
-  startDate.setHours(startHour, 0, 0);
-  
-  const endDate = new Date(collectionDate);
-  endDate.setHours(endHour, 0, 0);
-  
-  const formatICalDate = (date) => {
-    return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-  };
-  
-  const now = new Date();
-  const dtstamp = formatICalDate(now);
-  const dtstart = formatICalDate(startDate);
-  const dtend = formatICalDate(endDate);
-  
-  let description = `Booking #${data.bookingId}\\n\\n`;
-  description += `Customer: ${data.firstName} ${data.surname}\\n`;
-  description += `Phone: ${data.phone}\\n`;
-  description += `Email: ${data.email}\\n`;
-  description += `Address: ${data.address}, ${data.postcode}\\n`;
-  description += `Description: ${data.description}\\n`;
-  description += `Total: £${data.totalPrice.toFixed(2)}\\n`;
-  
-  if (data.imageUrls && data.imageUrls.length > 0) {
-    description += `\\nImages:\\n`;
-    data.imageUrls.forEach((url, index) => {
-      description += `${index + 1}. ${url}\\n`;
-    });
-  }
-  
-  const icsContent = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//Bristol Property Maintenance//Booking System//EN',
-    'CALSCALE:GREGORIAN',
-    'METHOD:REQUEST',
-    'BEGIN:VEVENT',
-    `UID:booking-${data.bookingId}@bristolpropertymaintenance.co.uk`,
-    `DTSTAMP:${dtstamp}`,
-    `DTSTART:${dtstart}`,
-    `DTEND:${dtend}`,
-    `SUMMARY:House Clearance - ${data.firstName} ${data.surname}`,
-    `LOCATION:${data.address}, ${data.postcode}`,
-    `DESCRIPTION:${description}`,
-    `STATUS:CONFIRMED`,
-    `SEQUENCE:0`,
-    `BEGIN:VALARM`,
-    `TRIGGER:-PT24H`,
-    `ACTION:DISPLAY`,
-    `DESCRIPTION:Reminder: House clearance tomorrow`,
-    `END:VALARM`,
-    'END:VEVENT',
-    'END:VCALENDAR'
-  ].join('\r\n');
-  
-  return icsContent;
-}
-
-/**
- * Send admin notification email via Nodemailer
- */
-async function sendAdminNotificationEmail(data) {
-  let imagesHtml = '';
-  if (data.imageUrls && data.imageUrls.length > 0) {
-    imagesHtml = '<div class="detail-row"><strong>Uploaded Images:</strong></div>';
-    data.imageUrls.forEach((url, index) => {
-      const filename = url.split('/').pop();
-      imagesHtml += `<div class="detail-row" style="margin-left: 20px;">
-        ${index + 1}. <a href="${url}" target="_blank" style="color: #003366;">${filename}</a>
-      </div>`;
-    });
-  }
-
-  const emailHtml = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background-color: #003366; color: white; padding: 20px; }
-        .details { background-color: #f9f9f9; padding: 20px; margin: 20px 0; }
-        .detail-row { margin: 10px 0; }
-        .calendar-note { background-color: #e8f4f8; padding: 15px; margin: 20px 0; border-left: 4px solid #003366; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <h2>New Booking Received - #${data.bookingId}</h2>
-        </div>
-        <div class="details">
-          <div class="detail-row"><strong>Customer:</strong> ${data.firstName} ${data.surname}</div>
-          <div class="detail-row"><strong>Email:</strong> ${data.email}</div>
-          <div class="detail-row"><strong>Phone:</strong> ${data.phone}</div>
-          <div class="detail-row"><strong>Address:</strong> ${data.address}, ${data.postcode}</div>
-          <div class="detail-row"><strong>Collection Date:</strong> ${new Date(data.collectionDate).toLocaleDateString('en-GB')}</div>
-          <div class="detail-row"><strong>Collection Window:</strong> ${data.collectionWindow}</div>
-          <div class="detail-row"><strong>Description:</strong> ${data.description}</div>
-          <div class="detail-row"><strong>Total Price:</strong> £${data.totalPrice.toFixed(2)}</div>
-          ${imagesHtml}
-        </div>
-        <div class="calendar-note">
-          <strong>📅 Calendar Invite Attached</strong><br>
-          Open the attached .ics file to add this booking to your calendar (works with Outlook, Google Calendar, Apple Calendar).
-        </div>
-      </div>
-    </body>
-    </html>
-  `;
-
-  const calendarInvite = generateCalendarInvite(data);
-
-  await transporter.sendMail({
-    from: process.env.EMAIL_FROM,
-    to: process.env.ADMIN_EMAIL,
-    subject: `New Booking #${data.bookingId} - ${data.firstName} ${data.surname}`,
-    html: emailHtml,
-    attachments: [
-      {
-        filename: `booking-${data.bookingId}.ics`,
-        content: calendarInvite,
-        contentType: 'text/calendar',
-      }
-    ],
-  });
-  
-  console.log(`✅ Admin notification email sent to ${process.env.ADMIN_EMAIL}`);
-}
 
 /**
  * Get booking by ID

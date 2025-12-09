@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import emailjs from "@emailjs/browser";
 import SquarePayment from "../../Payment/SquarePayment";
 
 export default function StepFour({ formData, handleChange, handleBack, pricing }) {
-
-
   const [showPayment, setShowPayment] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -15,36 +14,84 @@ export default function StepFour({ formData, handleChange, handleBack, pricing }
     setShowPayment(true);
   };
 
-const handlePaymentSuccess = async (paymentResult) => {
-  setIsProcessing(true);
-  try {
-    const apiUrl = process.env.REACT_APP_API_URL;
-    
-    const response = await fetch(`${apiUrl}/api/bookings`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...formData,
-        pricing: JSON.stringify(pricing),
-        paymentResult: JSON.stringify(paymentResult),
-        s3Urls: JSON.stringify(formData.s3Urls || []),
-      }),
-    });
-
-    if (response.ok) {
-      window.location.href = '/thankyou?booking=true';
-    } else {
-      alert('Error processing booking.');
+  const getCollectionWindowText = (window) => {
+    switch (window) {
+      case 'morning': return 'Morning (8am - 12pm)';
+      case 'afternoon': return 'Afternoon (12pm - 5pm)';
+      case 'evening': return 'Evening (5pm - 8pm)';
+      default: return window;
     }
-  } catch (error) {
-    console.error('Error:', error);
-    alert('Error processing booking.');
-  } finally {
-    setIsProcessing(false);
-  }
-};
+  };
+
+  const sendConfirmationEmail = async (bookingId) => {
+    try {
+      await emailjs.send(
+        'service_go85cgq',
+        'template_9r8mipf',
+        {
+          customer_email: formData.email,
+          customer_name: formData.firstName,
+          customer_surname: formData.surname,
+          customer_phone: formData.phone,
+          booking_id: bookingId,
+          collection_date: new Date(formData.collectionDate).toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          }),
+          collection_window: getCollectionWindowText(formData.collectionWindow),
+          address: formData.address,
+          postcode: formData.postcode,
+          description: formData.description,
+          total_price: pricing.totalPrice.toFixed(2),
+          size: formData.size.charAt(0).toUpperCase() + formData.size.slice(1),
+          image_urls: formData.s3Urls && formData.s3Urls.length > 0 
+            ? formData.s3Urls.join('\n') 
+            : 'No images uploaded',
+        },
+        'n3cGJxtvclpiQjFrD'
+      );
+      console.log('✅ Confirmation email sent');
+    } catch (error) {
+      console.error('❌ Email failed:', error);
+      // Don't block the flow if email fails - booking is already saved
+    }
+  };
+
+  const handlePaymentSuccess = async (paymentResult) => {
+    setIsProcessing(true);
+    try {
+      const apiUrl = process.env.REACT_APP_API_URL;
+
+      const response = await fetch(`${apiUrl}/api/bookings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          pricing: JSON.stringify(pricing),
+          paymentResult: JSON.stringify(paymentResult),
+          s3Urls: JSON.stringify(formData.s3Urls || []),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Send confirmation email via EmailJS
+        await sendConfirmationEmail(data.bookingId);
+        window.location.href = '/thankyou?booking=true';
+      } else {
+        alert('Error processing booking.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error processing booking.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   return (
     <Container>
