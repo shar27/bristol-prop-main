@@ -4,7 +4,7 @@ const cors = require('cors');
 const { Client, Environment } = require('square');
 const multer = require('multer');
 const { S3Client, PutObjectCommand, CopyObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
@@ -42,8 +42,25 @@ const squareClient = new Client({
     : Environment.Sandbox,
 });
 
-// Resend Email Configuration
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Nodemailer Email Configuration
+const transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_HOST,
+  port: parseInt(process.env.EMAIL_PORT),
+  secure: process.env.EMAIL_PORT === '465',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+});
+
+// Verify email connection
+transporter.verify((error, success) => {
+  if (error) {
+    console.error('❌ Email configuration error:', error);
+  } else {
+    console.log('✅ Email server ready');
+  }
+});
 
 // Database connection (PostgreSQL - Railway)
 console.log(`[DB] Connecting to Railway PostgreSQL...`);
@@ -237,7 +254,7 @@ app.post('/api/bookings', express.json(), async (req, res) => {
     };
 
     const extras = parseJson(req.body.extras, []);
-    const pricing = parseJson(req.body.pricing, { basePrice: 0, extrasTotal: 0, vat: 0, totalPrice: 0 });
+    const pricing = parseJson(req.body.pricing, { basePrice: 0, extrasTotal: 0, totalPrice: 0 });
     const paymentResult = parseJson(req.body.paymentResult, {});
     const s3Urls = parseJson(req.body.s3Urls, []);
 
@@ -266,8 +283,8 @@ app.post('/api/bookings', express.json(), async (req, res) => {
       propertyValuation || false,
       pricing.basePrice,
       pricing.extrasTotal,
-      pricing.vat,
-      pricing.totalPrice || pricing.totalWithVat,
+      0, // VAT is 0 since not VAT registered
+      pricing.totalPrice,
       paymentResult?.payment?.id || paymentResult?.id,
       'completed',
     ];
@@ -309,7 +326,7 @@ app.post('/api/bookings', express.json(), async (req, res) => {
       collectionWindow,
       address,
       postcode,
-      totalPrice: pricing.totalWithVat,
+      totalPrice: pricing.totalPrice,
     }).catch(err => console.error('Customer email failed:', err));
 
     sendAdminNotificationEmail({
@@ -323,7 +340,7 @@ app.post('/api/bookings', express.json(), async (req, res) => {
       collectionDate,
       collectionWindow,
       description,
-      totalPrice: pricing.totalWithVat,
+      totalPrice: pricing.totalPrice,
       imageUrls: finalS3Urls,
     }).catch(err => console.error('Admin email failed:', err));
 
@@ -345,7 +362,7 @@ app.post('/api/bookings', express.json(), async (req, res) => {
 });
 
 /**
- * Send customer confirmation email via Resend
+ * Send customer confirmation email via Nodemailer
  */
 async function sendCustomerConfirmationEmail(data) {
   const emailHtml = `
@@ -391,11 +408,10 @@ async function sendCustomerConfirmationEmail(data) {
     </html>
   `;
 
-  await resend.emails.send({
+  await transporter.sendMail({
     from: process.env.EMAIL_FROM,
-    replyTo: process.env.EMAIL_REPLY_TO,
-    cc: ['hello@bristolpropertymaintenance.co.uk'],
     to: data.email,
+    cc: process.env.ADMIN_EMAIL,
     subject: `Booking Confirmation - #${data.bookingId}`,
     html: emailHtml,
   });
@@ -487,7 +503,7 @@ function generateCalendarInvite(data) {
 }
 
 /**
- * Send admin notification email via Resend
+ * Send admin notification email via Nodemailer
  */
 async function sendAdminNotificationEmail(data) {
   let imagesHtml = '';
@@ -527,7 +543,7 @@ async function sendAdminNotificationEmail(data) {
           <div class="detail-row"><strong>Collection Date:</strong> ${new Date(data.collectionDate).toLocaleDateString('en-GB')}</div>
           <div class="detail-row"><strong>Collection Window:</strong> ${data.collectionWindow}</div>
           <div class="detail-row"><strong>Description:</strong> ${data.description}</div>
-          <div class="detail-row"><strong>Total Price:</strong> £${data.totalPrice.toFixed(2)} (Calculated from your selected load. Additional items may incur extra charges.)</div>
+          <div class="detail-row"><strong>Total Price:</strong> £${data.totalPrice.toFixed(2)}</div>
           ${imagesHtml}
         </div>
         <div class="calendar-note">
@@ -541,19 +557,18 @@ async function sendAdminNotificationEmail(data) {
 
   const calendarInvite = generateCalendarInvite(data);
 
-  await resend.emails.send({
+  await transporter.sendMail({
     from: process.env.EMAIL_FROM,
-    replyTo: process.env.EMAIL_REPLY_TO,
     to: process.env.ADMIN_EMAIL,
-    cc: ['hello@bristolpropertymaintenance.co.uk'],
     subject: `New Booking #${data.bookingId} - ${data.firstName} ${data.surname}`,
     html: emailHtml,
     attachments: [
       {
         filename: `booking-${data.bookingId}.ics`,
-        content: Buffer.from(calendarInvite).toString('base64'),
+        content: calendarInvite,
+        contentType: 'text/calendar',
       }
-    ]
+    ],
   });
   
   console.log(`✅ Admin notification email sent to ${process.env.ADMIN_EMAIL}`);
